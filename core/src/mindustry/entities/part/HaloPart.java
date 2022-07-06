@@ -66,14 +66,10 @@ public class HaloPart extends DrawPart{
                 float pointRot = rot + shapeMoveRot * prog * sign + shapeRotation * sign + baseRot * sign;
 
                 if(tri){
-                    if(rad > 0.001 && triLen > 0.001){
-                        Drawf.tri(shapeX, shapeY, rad, triLen, pointRot);
-                    }
+                    Drawf.tri(shapeX, shapeY, rad, triLen, pointRot);
                 }else if(!hollow){
-                    if(rad > 0.001){
-                        Fill.poly(shapeX, shapeY, sides, rad, pointRot);
-                    }
-                }else if(str > 0.001){
+                    Fill.poly(shapeX, shapeY, sides, rad, pointRot);
+                }else{
                     Lines.stroke(str);
                     Lines.poly(shapeX, shapeY, sides, rad, pointRot);
                     Lines.stroke(1f);
