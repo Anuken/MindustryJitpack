@@ -2241,7 +2241,7 @@ public class Blocks{
             requirements(Category.power, with(Items.titanium, 5, Items.lead, 10, Items.silicon, 3));
             size = 2;
             maxNodes = 15;
-            laserRange = 15f;
+            laserRange = 9.5f;
         }};
 
         surgeTower = new PowerNode("surge-tower"){{

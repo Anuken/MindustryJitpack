@@ -230,7 +230,7 @@ public class Rules{
         /** If true, this team has infinite unit ammo. */
         public boolean infiniteAmmo;
 
-        /** Enables "RTS" unit AI. */
+        /** Enables "RTS" unit AI. TODO wip */
         public boolean rtsAi;
         /** Minimum size of attack squads. */
         public int rtsMinSquad = 4;
