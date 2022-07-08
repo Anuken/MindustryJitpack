@@ -373,7 +373,6 @@ public class ConstructBlock extends Block{
             this.buildCost = block.buildCost * state.rules.buildCostMultiplier;
             this.accumulator = new float[block.requirements.length];
             this.totalAccumulator = new float[block.requirements.length];
-            pathfinder.updateTile(tile);
         }
 
         public void setDeconstruct(Block previous){
@@ -387,7 +386,6 @@ public class ConstructBlock extends Block{
             this.buildCost = previous.buildCost * state.rules.buildCostMultiplier;
             this.accumulator = new float[previous.requirements.length];
             this.totalAccumulator = new float[previous.requirements.length];
-            pathfinder.updateTile(tile);
         }
 
         @Override
