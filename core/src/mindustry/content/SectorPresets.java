@@ -16,7 +16,8 @@ public class SectorPresets{
     impact0078, desolateRift, nuclearComplex, planetaryTerminal,
     coastline, navalFortress,
 
-    onset, two, lake, three, four, atlas, split;
+    onset, two, lake, three, four
+    ;
 
     public static void load(){
         //region serpulo
@@ -200,26 +201,12 @@ public class SectorPresets{
         lake = new SectorPreset("lake", erekir, 41){{
             difficulty = 4;
 
-            rules = r -> {
-                r.objectives.addAll(
-                        new BuildCountObjective(Blocks.shipFabricator, 1),
-                        new UnitCountObjective(UnitTypes.elude, 1)
-                );
-            };
         }};
 
         three = new SectorPreset("three", erekir, 36){{
             difficulty = 5;
 
             captureWave = 9;
-        }};
-
-        atlas = new SectorPreset("atlas", erekir, 14){{ //TODO random sector, pick a better one
-            difficulty = 5;
-        }};
-
-        split = new SectorPreset("split", erekir, 19){{ //TODO random sector, pick a better one
-            difficulty = 5;
         }};
 
         four = new SectorPreset("four", erekir, 29){{
