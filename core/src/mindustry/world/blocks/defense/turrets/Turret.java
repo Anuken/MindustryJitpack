@@ -345,9 +345,9 @@ public class Turret extends ReloadTurret{
 
             float warmupTarget = isShooting() && canConsume() ? 1f : 0f;
             if(linearWarmup){
-                shootWarmup = Mathf.approachDelta(shootWarmup, warmupTarget, shootWarmupSpeed * (warmupTarget > 0 ? efficiency : 1f));
+                shootWarmup = Mathf.approachDelta(shootWarmup, warmupTarget, shootWarmupSpeed);
             }else{
-                shootWarmup = Mathf.lerpDelta(shootWarmup, warmupTarget, shootWarmupSpeed * (warmupTarget > 0 ? efficiency : 1f));
+                shootWarmup = Mathf.lerpDelta(shootWarmup, warmupTarget, shootWarmupSpeed);
             }
 
             wasShooting = false;
