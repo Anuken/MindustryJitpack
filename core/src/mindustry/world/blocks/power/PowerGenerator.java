@@ -35,7 +35,6 @@ public class PowerGenerator extends PowerDistributor{
     public float explosionPuddleRange = tilesize * 2f;
     public float explosionPuddleAmount = 100f;
     public @Nullable Liquid explosionPuddleLiquid;
-    public float explosionMinWarmup = 0f;
 
     public float explosionShake = 0f, explosionShakeDuration = 6f;
 
@@ -111,25 +110,23 @@ public class PowerGenerator extends PowerDistributor{
         }
 
         public void createExplosion(){
-            if(warmup() >= explosionMinWarmup){
-                if(explosionDamage > 0){
-                    Damage.damage(x, y, explosionRadius * tilesize, explosionDamage);
-                }
+            if(explosionDamage > 0){
+                Damage.damage(x, y, explosionRadius * tilesize, explosionDamage);
+            }
 
-                explodeEffect.at(this);
-                explodeSound.at(this);
+            explodeEffect.at(this);
+            explodeSound.at(this);
 
-                if(explosionPuddleLiquid != null){
-                    for(int i = 0; i < explosionPuddles; i++){
-                        Tmp.v1.trns(Mathf.random(360f), Mathf.random(explosionPuddleRange));
-                        Tile tile = world.tileWorld(x + Tmp.v1.x, y + Tmp.v1.y);
-                        Puddles.deposit(tile, explosionPuddleLiquid, explosionPuddleAmount);
-                    }
+            if(explosionPuddleLiquid != null){
+                for(int i = 0; i < explosionPuddles; i++){
+                    Tmp.v1.trns(Mathf.random(360f), Mathf.random(explosionPuddleRange));
+                    Tile tile = world.tileWorld(x + Tmp.v1.x, y + Tmp.v1.y);
+                    Puddles.deposit(tile, explosionPuddleLiquid, explosionPuddleAmount);
                 }
+            }
 
-                if(explosionShake > 0){
-                    Effect.shake(explosionShake, explosionShakeDuration, this);
-                }
+            if(explosionShake > 0){
+                Effect.shake(explosionShake, explosionShakeDuration, this);
             }
         }
 
