@@ -454,7 +454,6 @@ public class Blocks{
             speedMultiplier = 0.3f;
             variants = 0;
             liquidDrop = Liquids.arkycite;
-            liquidMultiplier = 1.5f;
             isLiquid = true;
             //TODO no status for now
             //status = StatusEffects.slow;
@@ -2452,7 +2451,6 @@ public class Blocks{
         chemicalCombustionChamber = new ConsumeGenerator("chemical-combustion-chamber"){{
             requirements(Category.power, with(Items.graphite, 40, Items.tungsten, 40, Items.oxide, 40f, Items.silicon, 30));
             powerProduction = 8f;
-            researchCost = with(Items.graphite, 2000, Items.tungsten, 1000, Items.oxide, 10, Items.silicon, 1500);
             consumeLiquids(LiquidStack.with(Liquids.ozone, 2f / 60f, Liquids.arkycite, 40f / 60f));
             size = 3;
             drawer = new DrawMulti(new DrawRegion("-bottom"), new DrawPistons(){{
@@ -3163,6 +3161,7 @@ public class Blocks{
                 Liquids.water,new LiquidBulletType(Liquids.water){{
                     knockback = 0.7f;
                     drag = 0.01f;
+                    layer = Layer.bullet - 2f;
                 }},
                 Liquids.slag, new LiquidBulletType(Liquids.slag){{
                     damage = 4;
@@ -3173,6 +3172,7 @@ public class Blocks{
                 }},
                 Liquids.oil, new LiquidBulletType(Liquids.oil){{
                     drag = 0.01f;
+                    layer = Layer.bullet - 2f;
                 }}
             );
             size = 2;
@@ -3439,6 +3439,7 @@ public class Blocks{
                     ammoMultiplier = 0.4f;
                     statusDuration = 60f * 4f;
                     damage = 0.2f;
+                    layer = Layer.bullet - 2f;
                 }},
                 Liquids.slag,  new LiquidBulletType(Liquids.slag){{
                     lifetime = 49f;
@@ -3472,6 +3473,7 @@ public class Blocks{
                     ammoMultiplier = 0.4f;
                     statusDuration = 60f * 4f;
                     damage = 0.2f;
+                    layer = Layer.bullet - 2f;
                 }}
             );
             size = 3;
