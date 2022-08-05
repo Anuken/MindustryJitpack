@@ -14,7 +14,6 @@ import mindustry.gen.*;
 import mindustry.graphics.*;
 import mindustry.ui.*;
 import mindustry.world.blocks.heat.*;
-import mindustry.world.meta.*;
 
 import static mindustry.Vars.*;
 
@@ -62,13 +61,6 @@ public class VariableReactor extends PowerGenerator{
             () -> entity.heat / maxHeat));
     }
 
-    @Override
-    public void setStats(){
-        super.setStats();
-
-        stats.add(Stat.input, maxHeat, StatUnit.heatUnits);
-    }
-
     //TODO: draw warmup fraction on block?
     public class VariableReactorBuild extends GeneratorBuild implements HeatConsumer{
         public float[] sideHeat = new float[4];
@@ -78,7 +70,7 @@ public class VariableReactor extends PowerGenerator{
         public void updateTile(){
             heat = calculateHeat(sideHeat);
 
-            productionEfficiency = Mathf.clamp(heat / maxHeat) * efficiency;
+            productionEfficiency = Mathf.clamp(heat / maxHeat);
             warmup = Mathf.lerpDelta(warmup, productionEfficiency > 0 ? 1f : 0f, warmupSpeed);
 
             if(instability >= 1f){
