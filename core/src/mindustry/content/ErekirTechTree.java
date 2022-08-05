@@ -192,8 +192,8 @@ public class ErekirTechTree{
                 node(cliffCrusher, () -> {
                     node(siliconArcFurnace, () -> {
                         node(electrolyzer, Seq.with(new OnSector(atlas)), () -> {
-                            node(oxidationChamber, Seq.with(new Research(tankRefabricator), new OnSector(basin)), () -> {
-                                node(electricHeater, Seq.with(new OnSector(basin)), () -> {
+                            node(oxidationChamber, Seq.with(new Research(tankRefabricator), new OnSector(marsh)), () -> {
+                                node(electricHeater, Seq.with(new OnSector(marsh)), () -> {
                                     node(heatRedirector, () -> {
                                         node(surgeCrucible, () -> {
 
@@ -260,14 +260,14 @@ public class ErekirTechTree{
                 });
 
                 node(diffuse, Seq.with(new OnSector(lake)), () -> {
-                    node(sublimate, () -> {
-                        node(titan, Seq.with(new OnSector(basin)), () -> {
-                            node(afflict, Seq.with(new OnSector(basin)), () -> {
+                    node(sublimate, Seq.with(new OnSector(marsh)), () -> {
+                        node(titan, Seq.with(new OnSector(marsh)), () -> {
+                            node(afflict, Seq.with(new OnSector(marsh)), () -> {
 
                             });
                         });
 
-                        node(disperse, Seq.with(new OnSector(basin)), () -> {
+                        node(disperse, Seq.with(new OnSector(marsh)), () -> {
 
                         });
                     });
@@ -358,7 +358,9 @@ public class ErekirTechTree{
                             });
 
                             node(basin, Seq.with(new SectorComplete(atlas)), () -> {
+                                node(marsh, Seq.with(new SectorComplete(basin)), () ->{
 
+                                });
                             });
                         });
                     });
