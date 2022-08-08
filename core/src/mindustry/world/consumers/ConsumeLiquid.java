@@ -40,7 +40,7 @@ public class ConsumeLiquid extends ConsumeLiquidBase{
 
     @Override
     public float efficiency(Building build){
-        float ed = build.edelta() * build.efficiencyScale();
+        float ed = build.edelta();
         if(ed <= 0.00000001f) return 0f;
         //there can be more liquid than necessary, so cap at 1
         return Math.min(build.liquids.get(liquid) / (amount * ed), 1f);

@@ -225,16 +225,6 @@ public class CanvasBlock extends Block{
         }
 
         @Override
-        public boolean onConfigureBuildTapped(Building other){
-            if(this == other){
-                deselect();
-                return false;
-            }
-
-            return true;
-        }
-
-        @Override
         public byte[] config(){
             return data;
         }

@@ -2123,20 +2123,17 @@ public class Blocks{
             requirements(Category.liquid, with(Items.titanium, 10, Items.metaglass, 15));
             liquidCapacity = 700f;
             size = 2;
-            solid = true;
         }};
 
         liquidTank = new LiquidRouter("liquid-tank"){{
             requirements(Category.liquid, with(Items.titanium, 30, Items.metaglass, 40));
             size = 3;
-            solid = true;
             liquidCapacity = 1800f;
             health = 500;
         }};
 
         liquidJunction = new LiquidJunction("liquid-junction"){{
             requirements(Category.liquid, with(Items.graphite, 4, Items.metaglass, 8));
-            solid = false;
         }};
 
         bridgeConduit = new LiquidBridge("bridge-conduit"){{
@@ -2160,8 +2157,10 @@ public class Blocks{
 
         //reinforced stuff
 
+        //TODO different name
         reinforcedPump = new Pump("reinforced-pump"){{
             requirements(Category.liquid, with(Items.beryllium, 40, Items.tungsten, 30, Items.silicon, 20));
+            //TODO CUSTOM DRAW ANIMATION - pistons - repurpose DrawBlock?
             consumeLiquid(Liquids.hydrogen, 1.5f / 60f);
 
             pumpAmount = 80f / 60f / 4f;
@@ -2452,6 +2451,7 @@ public class Blocks{
         chemicalCombustionChamber = new ConsumeGenerator("chemical-combustion-chamber"){{
             requirements(Category.power, with(Items.graphite, 40, Items.tungsten, 40, Items.oxide, 40f, Items.silicon, 30));
             powerProduction = 8f;
+            researchCost = with(Items.graphite, 2000, Items.tungsten, 1000, Items.oxide, 10, Items.silicon, 1500);
             consumeLiquids(LiquidStack.with(Liquids.ozone, 2f / 60f, Liquids.arkycite, 40f / 60f));
             size = 3;
             drawer = new DrawMulti(new DrawRegion("-bottom"), new DrawPistons(){{
@@ -5652,7 +5652,7 @@ public class Blocks{
         }};
 
         interplanetaryAccelerator = new Accelerator("interplanetary-accelerator"){{
-            requirements(Category.effect, BuildVisibility.campaignOnly, with(Items.copper, 16000, Items.silicon, 11000, Items.thorium, 13000, Items.titanium, 12000, Items.surgeAlloy, 6000, Items.phaseFabric, 5000));
+            requirements(Category.effect, BuildVisibility.hidden, with(Items.copper, 16000, Items.silicon, 11000, Items.thorium, 13000, Items.titanium, 12000, Items.surgeAlloy, 6000, Items.phaseFabric, 5000));
             researchCostMultiplier = 0.1f;
             size = 7;
             hasPower = true;

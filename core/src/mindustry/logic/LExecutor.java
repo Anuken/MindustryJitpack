@@ -57,17 +57,6 @@ public class LExecutor{
     public Team team = Team.derelict;
     public boolean privileged = false;
 
-    //yes, this is a minor memory leak, but it's probably not significant enough to matter
-    protected IntFloatMap unitTimeouts = new IntFloatMap();
-
-    boolean timeoutDone(Unit unit, float delay){
-        return Time.time >= unitTimeouts.get(unit.id) + delay;
-    }
-
-    void updateTimeout(Unit unit){
-        unitTimeouts.put(unit.id, Time.time);
-    }
-
     public boolean initialized(){
         return instructions.length > 0;
     }
@@ -439,15 +428,15 @@ public class LExecutor{
                         }
                     }
                     case payDrop -> {
-                        if(!exec.timeoutDone(unit, LogicAI.transferDelay)) return;
+                        if(ai.payTimer > 0) return;
 
                         if(unit instanceof Payloadc pay && pay.hasPayload()){
                             Call.payloadDropped(unit, unit.x, unit.y);
-                            exec.updateTimeout(unit);
+                            ai.payTimer = LogicAI.transferDelay;
                         }
                     }
                     case payTake -> {
-                        if(!exec.timeoutDone(unit, LogicAI.transferDelay)) return;
+                        if(ai.payTimer > 0) return;
 
                         if(unit instanceof Payloadc pay){
                             //units
@@ -471,7 +460,7 @@ public class LExecutor{
                                     }
                                 }
                             }
-                            exec.updateTimeout(unit);
+                            ai.payTimer = LogicAI.transferDelay;
                         }
                     }
                     case payEnter -> {
@@ -519,7 +508,7 @@ public class LExecutor{
                         }
                     }
                     case itemDrop -> {
-                        if(!exec.timeoutDone(unit, LogicAI.transferDelay)) return;
+                        if(ai.itemTimer > 0) return;
 
                         //clear item when dropping to @air
                         if(exec.obj(p1) == Blocks.air){
@@ -527,7 +516,7 @@ public class LExecutor{
                             if(!net.client()){
                                 unit.clearItem();
                             }
-                            exec.updateTimeout(unit);
+                            ai.itemTimer = LogicAI.transferDelay;
                         }else{
                             Building build = exec.building(p1);
                             int dropped = Math.min(unit.stack.amount, exec.numi(p2));
@@ -535,13 +524,13 @@ public class LExecutor{
                                 int accepted = build.acceptStack(unit.item(), dropped, unit);
                                 if(accepted > 0){
                                     Call.transferItemTo(unit, unit.item(), accepted, unit.x, unit.y, build);
-                                    exec.updateTimeout(unit);
+                                    ai.itemTimer = LogicAI.transferDelay;
                                 }
                             }
                         }
                     }
                     case itemTake -> {
-                        if(!exec.timeoutDone(unit, LogicAI.transferDelay)) return;
+                        if(ai.itemTimer > 0) return;
 
                         Building build = exec.building(p1);
                         int amount = exec.numi(p3);
@@ -552,7 +541,7 @@ public class LExecutor{
 
                             if(taken > 0){
                                 Call.takeItems(build, item, taken, unit);
-                                exec.updateTimeout(unit);
+                                ai.itemTimer = LogicAI.transferDelay;
                             }
                         }
                     }
@@ -1645,8 +1634,6 @@ public class LExecutor{
 
         @Override
         public void run(LExecutor exec){
-            if(net.client()) return;
-
             float
             spawnX = World.unconv(exec.numf(x)),
             spawnY = World.unconv(exec.numf(y));
