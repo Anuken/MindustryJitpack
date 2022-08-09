@@ -583,7 +583,7 @@ public class ResearchDialog extends BaseDialog{
             infoTable.table(b -> {
                 b.margin(0).left().defaults().left();
 
-                if(selectable){
+                if(selectable && (node.content.description != null || node.content.stats.toMap().size > 0)){
                     b.button(Icon.info, Styles.flati, () -> ui.content.show(node.content)).growY().width(50f);
                 }
                 b.add().grow();

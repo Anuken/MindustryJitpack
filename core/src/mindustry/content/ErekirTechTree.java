@@ -114,7 +114,7 @@ public class ErekirTechTree{
                         });
 
                         node(constructor, Seq.with(new OnSector(split)), () -> {
-                            node(smallDeconstructor, () -> {
+                            node(smallDeconstructor, Seq.with(tmpNever), () -> {
                                 node(largeConstructor, () -> {
 
                                 });
@@ -135,7 +135,7 @@ public class ErekirTechTree{
             //TODO move into turbine condenser?
             node(plasmaBore, () -> {
                 node(impactDrill, Seq.with(new OnSector(aegis)), () -> {
-                    node(largePlasmaBore, Seq.with(new OnSector(basin)), () -> {
+                    node(largePlasmaBore, Seq.with(tmpNever), () -> {
                         node(eruptionDrill, () -> {
 
                         });
@@ -153,12 +153,12 @@ public class ErekirTechTree{
                         });
                     });
 
-                    node(beamTower, Seq.with(new OnSector(basin)), () -> {
+                    node(beamTower, Seq.with(tmpNever), () -> {
 
                     });
 
 
-                    node(regenProjector, () -> {
+                    node(regenProjector, Seq.with(tmpNever), () -> {
                         //TODO more tiers of build tower or "support" structures like overdrive projectors
                         node(buildTower, Seq.with(new OnSector(basin)), () -> {
                             node(shockwaveTower, () -> {
@@ -192,8 +192,8 @@ public class ErekirTechTree{
                 node(cliffCrusher, () -> {
                     node(siliconArcFurnace, () -> {
                         node(electrolyzer, Seq.with(new OnSector(atlas)), () -> {
-                            node(oxidationChamber, Seq.with(new Research(tankRefabricator), new OnSector(basin)), () -> {
-                                node(electricHeater, Seq.with(new OnSector(basin)), () -> {
+                            node(oxidationChamber, Seq.with(new Research(tankRefabricator), new OnSector(marsh)), () -> {
+                                node(electricHeater, Seq.with(tmpNever), () -> {
                                     node(heatRedirector, () -> {
                                         node(surgeCrucible, () -> {
 
@@ -260,14 +260,14 @@ public class ErekirTechTree{
                 });
 
                 node(diffuse, Seq.with(new OnSector(lake)), () -> {
-                    node(sublimate, () -> {
-                        node(titan, Seq.with(new OnSector(basin)), () -> {
-                            node(afflict, Seq.with(new OnSector(basin)), () -> {
+                    node(sublimate, Seq.with(new OnSector(marsh)), () -> {
+                        node(titan, Seq.with(new OnSector(marsh)), () -> {
+                            node(afflict, Seq.with(new OnSector(marsh)), () -> {
 
                             });
                         });
 
-                        node(disperse, Seq.with(new OnSector(basin)), () -> {
+                        node(disperse, Seq.with(new OnSector(marsh)), () -> {
 
                         });
                     });
@@ -288,7 +288,7 @@ public class ErekirTechTree{
             node(tankFabricator, Seq.with(new Research(siliconArcFurnace), new Research(plasmaBore), new Research(turbineCondenser)), () -> {
                 node(UnitTypes.stell);
 
-                node(unitRepairTower, Seq.with(new OnSector(basin), new Research(mechRefabricator)), () -> {
+                node(unitRepairTower, Seq.with(tmpNever, new Research(mechRefabricator)), () -> {
 
                 });
 
@@ -358,7 +358,11 @@ public class ErekirTechTree{
                             });
 
                             node(basin, Seq.with(new SectorComplete(atlas)), () -> {
+                                node(marsh, Seq.with(new SectorComplete(basin)), () ->{
+                                    node(peaks, Seq.with(new SectorComplete(marsh), new SectorComplete(split)), () ->{
 
+                                    });
+                                });
                             });
                         });
                     });
