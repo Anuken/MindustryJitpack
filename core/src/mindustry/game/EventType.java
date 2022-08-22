@@ -554,7 +554,6 @@ public class EventType{
         }
     }
 
-    /** Called before a player leaves the game. */
     public static class PlayerLeave{
         public final Player player;
 
