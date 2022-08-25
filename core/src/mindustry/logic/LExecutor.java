@@ -481,7 +481,7 @@ public class LExecutor{
                         }
                     }
                     case build -> {
-                        if((state.rules.logicUnitBuild || exec.privileged) && unit.canBuild() && exec.obj(p3) instanceof Block block && block.canBeBuilt() && (block.unlockedNow() || unit.team.isAI())){
+                        if((state.rules.logicUnitBuild || exec.privileged) && unit.canBuild() && exec.obj(p3) instanceof Block block && block.canBeBuilt()){
                             int x = World.toTile(x1 - block.offset/tilesize), y = World.toTile(y1 - block.offset/tilesize);
                             int rot = Mathf.mod(exec.numi(p4), 4);
 
@@ -586,10 +586,6 @@ public class LExecutor{
 
                 if(type == LAccess.enabled && !exec.bool(p1)){
                     b.lastDisabler = exec.build;
-                }
-
-                if(type == LAccess.enabled && exec.bool(p1)){
-                    b.noSleep();
                 }
 
                 if(type.isObj && exec.var(p1).isobj){
