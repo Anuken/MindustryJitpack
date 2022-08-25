@@ -33,7 +33,6 @@ public class Liquids{
             effect = StatusEffects.tarred;
             boilPoint = 0.65f;
             gasColor = Color.grays(0.4f);
-            canStayOn.add(water);
         }};
 
         cryofluid = new Liquid("cryofluid", Color.valueOf("6ecdec")){{
@@ -54,7 +53,6 @@ public class Liquids{
             spreadTarget = Liquids.water;
             moveThroughBlocks = true;
             incinerable = true;
-            canStayOn.addAll(water, oil, cryofluid);
 
             colorFrom = Color.valueOf("e8803f");
             colorTo = Color.valueOf("8c1225");
@@ -63,7 +61,6 @@ public class Liquids{
         arkycite = new Liquid("arkycite", Color.valueOf("84a94b")){{
             flammability = 0.4f;
             viscosity = 0.7f;
-            neoplasm.canStayOn.add(this);
         }};
 
         gallium = new Liquid("gallium", Color.valueOf("9a9dbf")){{
