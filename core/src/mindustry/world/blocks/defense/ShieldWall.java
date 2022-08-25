@@ -43,7 +43,7 @@ public class ShieldWall extends Wall{
             Draw.rect(block.region, x, y);
 
             if(shieldRadius > 0){
-                float radius = shieldRadius * tilesize * size / 2f;
+                float radius = shieldRadius * tilesize;
 
                 Draw.z(Layer.shields);
 
