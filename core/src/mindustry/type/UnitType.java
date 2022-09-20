@@ -226,9 +226,7 @@ public class UnitType extends UnlockableContent{
     /** if false, the unit shield (usually seen in waves) is not drawn. */
     drawShields = true,
     /** if false, the unit body is not drawn. */
-    drawBody = true,
-    /** if false, the unit is not drawn on the minimap. */
-    drawMinimap = true;
+    drawBody = true;
 
     /** The default AI controller to assign on creation. */
     public Prov<? extends UnitController> aiController = () -> !flying ? new GroundAI() : new FlyingAI();
@@ -907,8 +905,6 @@ public class UnitType extends UnlockableContent{
     public void createIcons(MultiPacker packer){
         super.createIcons(packer);
 
-        sample = constructor.get();
-
         var toOutline = new Seq<TextureRegion>();
         getRegionsToOutline(toOutline);
 
@@ -949,6 +945,7 @@ public class UnitType extends UnlockableContent{
             }
         }
 
+        //TODO test
         if(sample instanceof Tankc){
             PixmapRegion pix = Core.atlas.getPixmap(treadRegion);
 
