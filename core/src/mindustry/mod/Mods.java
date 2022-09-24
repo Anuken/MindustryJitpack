@@ -40,7 +40,6 @@ public class Mods implements Loadable{
     private ObjectSet<String> specialFolders = ObjectSet.with("bundles", "sprites", "sprites-override");
 
     private int totalSprites;
-    private static ObjectFloatMap<String> textureResize = new ObjectFloatMap<>();
     private MultiPacker packer;
     private ModClassLoader mainLoader = new ModClassLoader(getClass().getClassLoader());
 
@@ -181,8 +180,7 @@ public class Mods implements Loadable{
     }
 
     private void packSprites(Seq<Fi> sprites, LoadedMod mod, boolean prefix, Seq<Future<Runnable>> tasks){
-        boolean bleed = Core.settings.getBool("linear", true) && !mod.meta.pregenerated;
-        float textureScale = mod.meta.texturescale;
+        boolean linear = Core.settings.getBool("linear", true);
 
         for(Fi file : sprites){
             String name = file.nameWithoutExtension();
@@ -206,16 +204,12 @@ public class Mods implements Loadable{
                 try{
                     Pixmap pix = new Pixmap(file.readBytes());
                     //only bleeds when linear filtering is on at startup
-                    if(bleed){
+                    if(linear){
                         Pixmaps.bleed(pix, 2);
                     }
                     //this returns a *runnable* which actually packs the resulting pixmap; this has to be done synchronously outside the method
                     return () -> {
-                        String fullName = (prefix ? mod.name + "-" : "") + name;
-                        packer.add(getPage(file), fullName, new PixmapRegion(pix));
-                        if(textureScale != 1.0f){
-                            textureResize.put(fullName, textureScale);
-                        }
+                        packer.add(getPage(file), (prefix ? mod.name + "-" : "") + name, new PixmapRegion(pix));
                         pix.dispose();
                     };
                 }catch(Exception e){
@@ -342,7 +336,7 @@ public class Mods implements Loadable{
                     if(c instanceof UnlockableContent u && c.minfo.mod != null){
                         u.load();
                         u.loadIcon();
-                        if(u.generateIcons && !c.minfo.mod.meta.pregenerated){
+                        if(u.generateIcons){
                             u.createIcons(packer);
                         }
                     }
@@ -350,17 +344,13 @@ public class Mods implements Loadable{
             }
             Log.debug("Time to generate icons: @", Time.elapsed());
 
+            packer.printStats();
+
             //dispose old atlas data
             Core.atlas = packer.flush(filter, new TextureAtlas());
 
-            Time.mark();
-            textureResize.each(e -> { Core.atlas.find(e.key).scale = e.value; });
-            Log.debug("Time to rescale textures: @", Time.elapsed());
-
             Core.atlas.setErrorRegion("error");
             Log.debug("Total pages: @", Core.atlas.getTextures().size);
-
-            packer.printStats();
         }
 
         packer.dispose();
@@ -1151,10 +1141,6 @@ public class Mods implements Loadable{
         public boolean java;
         /** If true, -outline regions for units are kept when packing. Only use if you know exactly what you are doing. */
         public boolean keepOutlines;
-        /** To rescale textures with a different size. Represents the size in pixels of the sprite of a 1x1 block. */
-        public float texturescale = 1.0f;
-        /** If true, bleeding is skipped and no content icons are generated. */
-        public boolean pregenerated;
 
         public String displayName(){
             return displayName == null ? name : displayName;
@@ -1188,7 +1174,6 @@ public class Mods implements Loadable{
                     ", minGameVersion='" + minGameVersion + '\'' +
                     ", hidden=" + hidden +
                     ", repo=" + repo +
-                    ", texturescale=" + texturescale +
                     '}';
         }
     }

@@ -1,8 +1,5 @@
 [
-  {
-    "name": "Mindustry Español",
-    "address": ["n1.xpdustry.fr:6001"]
-  },
+  
   {
     "name": "mindustry.pl",
     "address": ["0.baseduser.eu.org:6966", "0.baseduser.eu.org:6666", "0.baseduser.eu.org:6000"]
@@ -10,10 +7,6 @@
   {
     "name": "SynapseOS",
     "address": ["0nera.ru:7777", "185.178.45.224:7777"]
-  },
-  {
-    "name": "Voiddustry",
-    "address": ["45.144.66.250:6566"]
   },
   {
     "name": "C.A.M.S.",
@@ -117,18 +110,10 @@
   },
     {
     "name": "Eradicationdustry",
-    "address": ["n1.yeet.ml:6577", "n1.yeet.ml:6576", "n1.yeet.ml:6602", "n1.yeet.ml:6669", "eradicationmindustry.yeet.ml:9547", "n1.yeet.ml:6593"]
+    "address": ["n1.yeet.ml:6577", "n1.yeet.ml:6576", "n1.yeet.ml:6602", "n1.yeet.ml:6669", "eradicationmindustry.yeet.ml:9547"]
   },
     {
-    "name": "AlternightBrasil",
-    "address": ["mindustrypt.ga:6567","mindustrypt.ga:6565","mindustrypt.ga:7770","mindustrypt.ga:6564","mindustrypt.ga:6566","mindustrypt.ga:6568"]
-  },
-    {
-    "name": "Vanilla",
-    "address": ["130.162.228.202"]
-  },
-  {
-    "name": "LightDustry",
-    "address": ["own-formerly.craft.playit.gg:26618", "lightdusy.ddns.net:6567", "lightdusy.ddns.net:6568"]
-  }
+    "name": "AlternightBR",
+    "address": ["mindustry.ga:6567","mindustry.ga:6565","mindustry.ga:7770","mindustry.ga:6564","mindustry.ga:6566"]
+    }
 ]
