@@ -5746,7 +5746,6 @@ public class Blocks{
             requirements(Category.logic, with(Items.copper, 90, Items.lead, 50, Items.silicon, 50));
 
             instructionsPerTick = 2;
-
             size = 1;
         }};
 
@@ -5754,9 +5753,7 @@ public class Blocks{
             requirements(Category.logic, with(Items.lead, 320, Items.silicon, 80, Items.graphite, 60, Items.thorium, 50));
 
             instructionsPerTick = 8;
-
             range = 8 * 22;
-
             size = 2;
         }};
 
@@ -5801,7 +5798,7 @@ public class Blocks{
         }};
 
         canvas = new CanvasBlock("canvas"){{
-            requirements(Category.logic, BuildVisibility.debugOnly, with(Items.silicon, 50));
+            requirements(Category.logic, BuildVisibility.shown, with(Items.silicon, 40, Items.graphite, 10));
 
             canvasSize = 12;
             padding = 7f / 4f * 2f;
