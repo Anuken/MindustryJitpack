@@ -23,7 +23,7 @@ public enum Gamemode{
         rules.waveTimer = true;
 
         rules.waveSpacing = 2f * Time.toMinutes;
-        rules.waveTeam.rules().infiniteResources = true;
+        rules.teams.get(rules.waveTeam).infiniteResources = true;
     }, map -> map.teams.size > 1),
     pvp(rules -> {
         rules.pvp = true;
