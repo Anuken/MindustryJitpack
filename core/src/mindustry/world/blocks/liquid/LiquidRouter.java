@@ -9,7 +9,9 @@ public class LiquidRouter extends LiquidBlock{
 
     public LiquidRouter(String name){
         super(name);
-        solid = true;
+
+        underBullets = true;
+        solid = false;
         noUpdateDisabled = true;
         canOverdrive = false;
         floating = true;
