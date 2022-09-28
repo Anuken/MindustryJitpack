@@ -21,7 +21,7 @@ public class LiquidDisplay extends Table{
         this.perSecond = perSecond;
 
         add(new Stack(){{
-            add(new Image(liquid.uiIcon).setScaling(Scaling.fit));
+            add(new Image(liquid.uiIcon));
 
             if(amount != 0){
                 Table t = new Table().left().bottom();
