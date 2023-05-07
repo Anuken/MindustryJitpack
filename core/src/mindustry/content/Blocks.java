@@ -79,8 +79,6 @@ public class Blocks{
     //sandbox
     powerSource, powerVoid, itemSource, itemVoid, liquidSource, liquidVoid, payloadSource, payloadVoid, illuminator, heatSource,
 
-    partInput, partOutput,
-
     //defense
     copperWall, copperWallLarge, titaniumWall, titaniumWallLarge, plastaniumWall, plastaniumWallLarge, thoriumWall, thoriumWallLarge, door, doorLarge,
     phaseWall, phaseWallLarge, surgeWall, surgeWallLarge,
@@ -5742,14 +5740,6 @@ public class Blocks{
             warmupRate = 1000f;
             regionRotated1 = 1;
             ambientSound = Sounds.none;
-        }};
-
-        partInput = new PartMarker("part-input"){{
-            requirements(Category.crafting, BuildVisibility.debugOnly, with());
-        }};
-
-        partOutput = new PartMarker("part-output"){{
-            requirements(Category.crafting, BuildVisibility.debugOnly, with());
         }};
 
         //TODO move
