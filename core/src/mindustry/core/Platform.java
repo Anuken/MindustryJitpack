@@ -172,10 +172,6 @@ public interface Platform{
                 }
 
                 String result = OS.exec(args.toArray(String.class));
-                //first line.
-                if(result.length() > 1 && result.contains("\n")){
-                    result = result.split("\n")[0];
-                }
 
                 //cancelled selection, ignore result
                 if(result.isEmpty() || result.equals("\n")) return;
