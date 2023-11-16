@@ -219,8 +219,7 @@ public class CommandAI extends AIController{
             }
 
             if(unit.isGrounded() && stance != UnitStance.ram){
-                //TODO: blocking is disabled, doesn't work well
-                if(timer.get(timerTarget3, avoidInterval) && false){
+                if(timer.get(timerTarget3, avoidInterval)){
                     Vec2 dstPos = Tmp.v1.trns(unit.rotation, unit.hitSize/2f);
                     float max = unit.hitSize/2f;
                     float radius = Math.max(7f, max);
@@ -248,7 +247,7 @@ public class CommandAI extends AIController{
                 }
 
                 //if you've spent 3 seconds stuck, something is wrong, move regardless
-                move = hpath.getPathPosition(unit, vecMovePos, targetPos, vecOut, noFound) && (!blockingUnit || timeSpentBlocked > maxBlockTime);
+                move = Vars.controlPath.getPathPosition(unit, pathId, vecMovePos, vecOut, noFound) && (!blockingUnit || timeSpentBlocked > maxBlockTime);
                 //we've reached the final point if the returned coordinate is equal to the supplied input
                 isFinalPoint &= vecMovePos.epsilonEquals(vecOut, 4.1f);
 
@@ -399,6 +398,8 @@ public class CommandAI extends AIController{
 
     @Override
     public void commandPosition(Vec2 pos){
+        if(pos == null) return;
+
         commandPosition(pos, false);
         if(commandController != null){
             commandController.commandPosition(pos);
@@ -406,8 +407,10 @@ public class CommandAI extends AIController{
     }
 
     public void commandPosition(Vec2 pos, boolean stopWhenInRange){
-        targetPos = pos;
-        lastTargetPos = pos;
+        if(pos == null) return;
+
+        //this is an allocation, but it's relatively rarely called anyway, and outside mutations must be prevented
+        targetPos = lastTargetPos = pos.cpy();
         attackTarget = null;
         pathId = Vars.controlPath.nextTargetId();
         this.stopWhenInRange = stopWhenInRange;
