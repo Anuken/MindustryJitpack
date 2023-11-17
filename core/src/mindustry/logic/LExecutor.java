@@ -1459,8 +1459,7 @@ public class LExecutor{
                 case ban -> {
                     Object cont = exec.obj(value);
                     if(cont instanceof Block b){
-                        // Rebuild PlacementFragment if anything has changed
-                        if(state.rules.bannedBlocks.add(b) && !headless) ui.hudfrag.blockfrag.rebuild();
+                        state.rules.bannedBlocks.add(b);
                     }else if(cont instanceof UnitType u){
                         state.rules.bannedUnits.add(u);
                     }
@@ -1468,7 +1467,7 @@ public class LExecutor{
                 case unban -> {
                     Object cont = exec.obj(value);
                     if(cont instanceof Block b){
-                        if(state.rules.bannedBlocks.remove(b) && !headless) ui.hudfrag.blockfrag.rebuild();
+                        state.rules.bannedBlocks.remove(b);
                     }else if(cont instanceof UnitType u){
                         state.rules.bannedUnits.remove(u);
                     }
