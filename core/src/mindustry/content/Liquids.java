@@ -54,7 +54,7 @@ public class Liquids{
             capPuddles = false;
             spreadTarget = Liquids.water;
             moveThroughBlocks = true;
-            incinerable = false;
+            incinerable = true;
             blockReactive = false;
             canStayOn.addAll(water, oil, cryofluid);
 

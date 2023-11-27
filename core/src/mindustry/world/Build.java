@@ -47,10 +47,7 @@ public class Build{
         Block sub = ConstructBlock.get(previous.size);
 
         Seq<Building> prevBuild = new Seq<>(1);
-        if(tile.build != null){
-            prevBuild.add(tile.build);
-            tile.build.onDeconstructed(unit);
-        }
+        if(tile.build != null) prevBuild.add(tile.build);
 
         tile.setBlock(sub, team, rotation);
         var build = (ConstructBuild)tile.build;

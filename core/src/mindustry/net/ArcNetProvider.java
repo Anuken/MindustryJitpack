@@ -5,7 +5,6 @@ import arc.func.*;
 import arc.math.*;
 import arc.net.*;
 import arc.net.FrameworkMessage.*;
-import arc.net.Server.*;
 import arc.net.dns.*;
 import arc.struct.*;
 import arc.util.*;
@@ -160,11 +159,6 @@ public class ArcNetProvider implements NetProvider{
     @Override
     public void setConnectFilter(Server.ServerConnectFilter connectFilter){
         server.setConnectFilter(connectFilter);
-    }
-
-    @Override
-    public @Nullable ServerConnectFilter getConnectFilter(){
-        return server.getConnectFilter();
     }
 
     private static boolean isLocal(InetAddress addr){
