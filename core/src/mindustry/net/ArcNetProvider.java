@@ -5,13 +5,10 @@ import arc.func.*;
 import arc.math.*;
 import arc.net.*;
 import arc.net.FrameworkMessage.*;
-import arc.net.Server.*;
-import arc.net.dns.*;
 import arc.struct.*;
 import arc.util.*;
 import arc.util.Log.*;
 import arc.util.io.*;
-import mindustry.*;
 import mindustry.game.EventType.*;
 import mindustry.net.Administration.*;
 import mindustry.net.Net.*;
@@ -165,7 +162,7 @@ public class ArcNetProvider implements NetProvider{
     }
 
     @Override
-    public @Nullable ServerConnectFilter getConnectFilter(){
+    public @Nullable Server.ServerConnectFilter getConnectFilter(){
         return server.getConnectFilter();
     }
 
@@ -225,6 +222,19 @@ public class ArcNetProvider implements NetProvider{
 
     @Override
     public void pingHost(String address, int port, Cons<Host> valid, Cons<Exception> invalid){
+        long time = Time.millis();
+
+        Dns.resolveAddress(address, inetaddr -> {
+            var socket = new InetSocketAddress(inetaddr, port);
+
+            AsyncUdp.send(socket, 2000, 512, ByteBuffer.wrap(new byte[]{-2, 1}), data ->  {
+                Host host = NetworkIO.readServerData((int)Time.timeSinceMillis(time), socket.getAddress().getHostAddress(), data);
+                host.port = port;
+                Core.app.post(() -> valid.get(host));
+            }, e -> Core.app.post(() -> invalid.get(e)));
+        }, err -> Core.app.post(() -> invalid.get(err)));
+
+        /*
         try{
             var host = pingHostImpl(address, port);
             Core.app.post(() -> valid.get(host));
@@ -240,7 +250,7 @@ public class ArcNetProvider implements NetProvider{
                 }
             }
             Core.app.post(() -> invalid.get(e));
-        }
+        }*/
     }
 
     private Host pingHostImpl(String address, int port) throws IOException{
