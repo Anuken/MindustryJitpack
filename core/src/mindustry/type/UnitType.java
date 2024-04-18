@@ -433,6 +433,8 @@ public class UnitType extends UnlockableContent implements Senseable{
     public TextureRegion[] wreckRegions, segmentRegions, segmentOutlineRegions;
     public TextureRegion[][] treadRegions;
 
+    //INTERNAL REQUIREMENTS
+
     protected float buildTime = -1f;
     protected @Nullable ItemStack[] totalRequirements, cachedRequirements, firstRequirements;
 
@@ -1188,6 +1190,8 @@ public class UnitType extends UnlockableContent implements Senseable{
 
     //region drawing
 
+
+    /** Set up drawing state before calling! e.g. drawingPayload */
     public void draw(Unit unit){
         if(unit.inFogTo(Vars.player.team())) return;
 
@@ -1470,6 +1474,7 @@ public class UnitType extends UnlockableContent implements Senseable{
     }
 
     public <T extends Unit & Tankc> void drawTank(T unit){
+        applyColor(unit);
         Draw.rect(treadRegion, unit.x, unit.y, unit.rotation - 90);
 
         if(treadRegion.found()){
@@ -1640,6 +1645,10 @@ public class UnitType extends UnlockableContent implements Senseable{
 
         if(unit.drownTime > 0 && unit.lastDrownFloor != null){
             Draw.mixcol(Tmp.c1.set(unit.lastDrownFloor.mapColor).mul(0.83f), unit.drownTime * 0.9f);
+        }
+        //this is horribly scuffed.
+        if(renderer != null && renderer.overlays != null){
+            renderer.overlays.checkApplySelection(unit);
         }
     }
 
