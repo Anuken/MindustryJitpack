@@ -341,7 +341,7 @@ public class AIController implements UnitController{
             vec.setLength(speed * length);
         }
 
-        //ignore invalid movement values
+        //do not move when infinite vectors are used or if its zero.
         if(vec.isNaN() || vec.isInfinite() || vec.isZero()) return;
 
         if(!unit.type.omniMovement && unit.type.rotateMoveFirst){

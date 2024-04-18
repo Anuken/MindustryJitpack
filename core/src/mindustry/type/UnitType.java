@@ -288,8 +288,6 @@ public class UnitType extends UnlockableContent implements Senseable{
 
     /** Function used for calculating cost of moving with ControlPathfinder. Does not affect "normal" flow field pathfinding. */
     public @Nullable PathCost pathCost;
-    /** ID for path cost, to be used in the control path finder. This is the value that actually matters; do not assign manually. Set in init(). */
-    public int pathCostId;
     /** A sample of the unit that this type creates. Do not modify! */
     public @Nullable Unit sample;
 
@@ -692,9 +690,6 @@ public class UnitType extends UnlockableContent implements Senseable{
                 hovering ? ControlPathfinder.costHover :
                 ControlPathfinder.costGround;
         }
-
-        pathCostId = ControlPathfinder.costTypes.indexOf(pathCost);
-        if(pathCostId == -1) pathCostId = 0;
 
         if(flying){
             envEnabled |= Env.space;
@@ -1470,6 +1465,7 @@ public class UnitType extends UnlockableContent implements Senseable{
     }
 
     public <T extends Unit & Tankc> void drawTank(T unit){
+        applyColor(unit);
         Draw.rect(treadRegion, unit.x, unit.y, unit.rotation - 90);
 
         if(treadRegion.found()){
@@ -1640,6 +1636,10 @@ public class UnitType extends UnlockableContent implements Senseable{
 
         if(unit.drownTime > 0 && unit.lastDrownFloor != null){
             Draw.mixcol(Tmp.c1.set(unit.lastDrownFloor.mapColor).mul(0.83f), unit.drownTime * 0.9f);
+        }
+        //this is horribly scuffed.
+        if(renderer != null && renderer.overlays != null){
+            renderer.overlays.checkApplySelection(unit);
         }
     }
 

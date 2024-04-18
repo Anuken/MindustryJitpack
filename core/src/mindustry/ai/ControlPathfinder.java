@@ -17,7 +17,6 @@ import mindustry.world.*;
 import static mindustry.Vars.*;
 import static mindustry.ai.Pathfinder.*;
 
-//TODO remove/replace
 public class ControlPathfinder{
     //TODO this FPS-based update system could be flawed.
     private static final long maxUpdate = Time.millisToNanos(30);
@@ -61,19 +60,6 @@ public class ControlPathfinder{
     //impassable synthetic enemy block
     ((PathTile.team(tile) != team && PathTile.team(tile) != 0) && PathTile.solid(tile) ? wallImpassableCap : 0) +
     (PathTile.nearGround(tile) || PathTile.nearSolid(tile) ? 6 : 0);
-
-    public static final int
-    costIdGround = 0,
-    costIdHover = 1,
-    costIdLegs = 2,
-    costIdNaval = 3;
-
-    public static final Seq<PathCost> costTypes = Seq.with(
-    costGround,
-    costHover,
-    costLegs,
-    costNaval
-    );
 
     public static boolean showDebug = false;
 
