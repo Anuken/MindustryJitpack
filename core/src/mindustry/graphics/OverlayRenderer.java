@@ -129,11 +129,9 @@ public class OverlayRenderer{
             Draw.mixcol(Pal.accent, 1f);
             Draw.alpha(unitFade);
             Building build = (select instanceof BlockUnitc b ? b.tile() : select instanceof Building b ? b : null);
-            TextureRegion region = build != null ? build.block.fullIcon : Core.atlas.white();
+            TextureRegion region = build != null ? build.block.fullIcon : select instanceof Unit u ? u.icon() : Core.atlas.white();
 
-            if(!(select instanceof Unitc)){
-                Draw.rect(region, select.getX(), select.getY());
-            }
+            Draw.rect(region, select.getX(), select.getY(), select instanceof Unit u && !(select instanceof BlockUnitc) ? u.rotation - 90f : 0f);
 
             for(int i = 0; i < 4; i++){
                 float rot = i * 90f + 45f + (-Time.time) % 360f;
@@ -254,12 +252,6 @@ public class OverlayRenderer{
                     build.block.drawPlaceText(Core.bundle.get("bar.onlycoredeposit"), build.tileX(), build.tileY(), false);
                 }
             }
-        }
-    }
-
-    public void checkApplySelection(Unit u){
-        if(unitFade > 0 && lastSelect == u){
-            Draw.mixcol(Pal.accent, unitFade);
         }
     }
 
