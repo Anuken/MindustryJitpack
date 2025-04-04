@@ -463,7 +463,7 @@ public abstract class InputHandler implements InputProcessor, GestureListener{
 
     @Remote(targets = Loc.both, called = Loc.server)
     public static void requestUnitPayload(Player player, Unit target){
-        if(player == null || !(player.unit() instanceof Payloadc pay)) return;
+        if(player == null || !(player.unit() instanceof Payloadc pay) || target == null) return;
 
         Unit unit = player.unit();
 
@@ -638,7 +638,11 @@ public abstract class InputHandler implements InputProcessor, GestureListener{
                 player.con.send(packet, true);
             }
 
-            throw new ValidateException(player, "Player cannot configure a tile.");
+            if(!player.isLocal()){
+                throw new ValidateException(player, "Player cannot configure a tile.");
+            }else{
+                return;
+            }
         }
         build.configured(player == null || player.dead() ? null : player.unit(), value);
         Events.fire(new ConfigEvent(build, player, value));
