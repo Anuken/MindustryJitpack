@@ -969,7 +969,11 @@ public class LExecutor{
             if(Vars.headless) return;
 
             if(target.building() instanceof LogicDisplayBuild d && (d.team == exec.team || exec.privileged)){
-                d.flushCommands(exec.graphicsBuffer);
+                if(d.commands.size + exec.graphicsBuffer.size < maxDisplayBuffer){
+                    for(int i = 0; i < exec.graphicsBuffer.size; i++){
+                        d.commands.addLast(exec.graphicsBuffer.items[i]);
+                    }
+                }
                 exec.graphicsBuffer.clear();
             }
         }

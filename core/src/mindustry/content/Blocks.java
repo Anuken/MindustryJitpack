@@ -158,7 +158,7 @@ public class Blocks{
     payloadConveyor, payloadRouter, reinforcedPayloadConveyor, reinforcedPayloadRouter, payloadMassDriver, largePayloadMassDriver, smallDeconstructor, deconstructor, constructor, largeConstructor, payloadLoader, payloadUnloader,
 
     //logic
-    message, switchBlock, microProcessor, logicProcessor, hyperProcessor, largeLogicDisplay, logicDisplay, logicDisplayTile, memoryCell, memoryBank,
+    message, switchBlock, microProcessor, logicProcessor, hyperProcessor, largeLogicDisplay, logicDisplay, memoryCell, memoryBank,
     canvas, reinforcedMessage,
     worldProcessor, worldCell, worldMessage, worldSwitch,
 
@@ -5008,13 +5008,13 @@ public class Blocks{
                             }});
 
                             collidesAir = false;
-                            buildingDamageMultiplier = 0.25f;
+                            buildingDamageMultiplier = 0.1f;
 
                             ammoMultiplier = 1f;
                             fragLifeMin = 0.1f;
                             fragBullets = 7;
                             fragBullet = new ArtilleryBulletType(3.4f, 32){{
-                                buildingDamageMultiplier = 0.3f;
+                                buildingDamageMultiplier = 0.1f;
                                 drag = 0.02f;
                                 hitEffect = Fx.massiveExplosion;
                                 despawnEffect = Fx.scatheSlash;
@@ -5053,7 +5053,7 @@ public class Blocks{
                 shootEffect = Fx.shootBig;
                 smokeEffect = Fx.shootSmokeMissileColor;
                 hitColor = Color.valueOf("ffd37f");
-                ammoMultiplier = 5f;
+                ammoMultiplier = 3f;
                 reloadMultiplier = 0.8f;
 
                 spawnUnit = new MissileUnitType("scathe-missile-phase"){{
@@ -5100,7 +5100,7 @@ public class Blocks{
                         bullet = new ExplosionBulletType(400f, 120f){{
                             //stats must be mirrored to the bullet that the unit uses
                             reloadMultiplier = 0.8f;
-                            ammoMultiplier = 5f;
+                            ammoMultiplier = 3f;
 
                             hitColor = engineColor;
                             shootEffect = new MultiEffect(Fx.massiveExplosion, Fx.scatheExplosion, Fx.scatheLight, new WaveEffect(){{
@@ -5193,11 +5193,14 @@ public class Blocks{
                         deathExplosionEffect = Fx.massiveExplosion;
                         shootOnDeath = true;
                         shake = 10f;
-                        bullet = new ExplosionBulletType(300f, 40f){{
+                        bullet = new ExplosionBulletType(1800f, 40f){{
                             //mirror stats
                             ammoMultiplier = 1f;
                             rangeChange = -8f*9f;
                             reloadMultiplier = 0.9f;
+                            lightning = 10;
+                            lightningDamage = 45f;
+                            lightningLength = 12;
 
                             hitColor = engineColor;
                             shootEffect = new MultiEffect(Fx.massiveExplosion, Fx.scatheExplosionSmall);
@@ -5208,7 +5211,7 @@ public class Blocks{
                             fragLifeMin = 0.1f;
                             fragBullets = 5;
                             fragRandomSpread = 0f;
-                            fragSpread = 30f;
+                            fragSpread = 20f;
                             fragBullet = new BulletType(){{
                                 shootEffect = Fx.shootBig;
                                 smokeEffect = Fx.shootSmokeMissileColor;
@@ -5244,10 +5247,10 @@ public class Blocks{
                                         deathExplosionEffect = Fx.massiveExplosion;
                                         shootOnDeath = true;
                                         shake = 10f;
-                                        bullet = new ExplosionBulletType(360f, 35f){{
-                                            lightning = 6;
-                                            lightningDamage = 35f;
-                                            lightningLength = 8;
+                                        bullet = new ExplosionBulletType(180f, 35f){{
+                                            lightning = 4;
+                                            lightningDamage = 25f;
+                                            lightningLength = 6;
 
                                             hitColor = engineColor;
                                             shootEffect = new MultiEffect(Fx.massiveExplosion, Fx.scatheExplosionSmall, Fx.scatheLightSmall, new WaveEffect(){{
@@ -6591,10 +6594,6 @@ public class Blocks{
             displaySize = 176;
 
             size = 6;
-        }};
-
-        logicDisplayTile = new TileableLogicDisplay("tile-logic-display"){{
-            requirements(Category.logic, with(Items.lead, 10, Items.silicon, 10, Items.metaglass, 10, Items.phaseFabric, 6));
         }};
 
         canvas = new CanvasBlock("canvas"){{
