@@ -20,7 +20,6 @@ public class MapMarkers implements Iterable<ObjectiveMarker>{
         var prev = map.put(id, marker);
         if(prev != null){
             all.set(prev.arrayIndex, marker);
-            marker.arrayIndex = prev.arrayIndex;
         }else{
             all.add(marker);
             marker.arrayIndex = all.size - 1;
