@@ -20,6 +20,11 @@ public class BlankPlanetGenerator extends PlanetGenerator{
     }
 
     @Override
+    public void generateSector(Sector sector){
+
+    }
+
+    @Override
     public void addWeather(Sector sector, Rules rules){
 
     }
