@@ -136,7 +136,7 @@ public class AIController implements UnitController{
 
         Tile tile = unit.tileOn();
         if(tile == null) return;
-        Tile targetTile = pathfinder.getField(unit.team, costType, pathTarget).getNextTile(tile, unit.collisionLayer(), unit.id);
+        Tile targetTile = pathfinder.getField(unit.team, costType, pathTarget).getNextTile(tile);
 
         if((tile == targetTile && stopAtTargetTile) || !unit.canPass(targetTile.x, targetTile.y)) return;
 
