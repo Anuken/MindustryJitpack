@@ -107,8 +107,6 @@ public class Pathfinder implements Runnable{
 
     boolean needsRefresh;
 
-    int[][] avoidance;
-
     public Pathfinder(){
         clearCache();
 
@@ -123,7 +121,6 @@ public class Pathfinder implements Runnable{
             mainList = new Seq<>();
             clearCache();
 
-            avoidance = new int[4][tiles.length];
 
             for(int i = 0; i < tiles.length; i++){
                 Tile tile = world.tiles.geti(i);
@@ -144,38 +141,6 @@ public class Pathfinder implements Runnable{
             }
 
             start();
-        });
-
-        //TODO: the before/after game update avoidance code is very slow, but it works as a concept. future versions can do the clearing/area definitions in another thread
-
-        Events.run(Trigger.beforeGameUpdate, () -> {
-            for(var unit : Groups.unit){
-                if(!unit.isFlying()){
-                    int layer = unit.collisionLayer();
-                    if(layer < avoidance.length){
-                        float scaling = 2f;
-                        int r = Math.max(1, Mathf.ceil(unit.hitSize * 0.6f / tilesize * scaling));
-                        var arr = avoidance[layer];
-
-                        float rad2 = (unit.hitSize * unitCollisionRadiusScale / tilesize * scaling) * (unit.hitSize * unitCollisionRadiusScale / tilesize * scaling);
-
-                        for(int dx = -r; dx <= r; dx++){
-                            for(int dy = -r; dy <= r; dy++){
-                                int x = dx + unit.tileX(), y = dy + unit.tileY();
-                                if(x >= 0 && y >= 0 && x < wwidth && y < wheight && (dx*dx + dy*dy) <= rad2){
-                                    arr[x + y * wwidth] = Math.max(arr[x + y * wwidth], Integer.MAX_VALUE - unit.id);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        Events.run(Trigger.afterGameUpdate, () -> {
-            for(var arr : avoidance){
-                Arrays.fill(arr, 0);
-            }
         });
 
         Events.on(ResetEvent.class, event -> stop());
@@ -288,7 +253,7 @@ public class Pathfinder implements Runnable{
         nearSolid,
         nearLegSolid,
         tile.floor().isDeep(),
-        tile.floor().damageTaken > 0.00001f,
+        tile.floor().damages(),
         allDeep,
         nearDeep,
         tile.block().teamPassable
@@ -394,11 +359,6 @@ public class Pathfinder implements Runnable{
 
     /** Gets next tile to travel to. Main thread only. */
     public @Nullable Tile getTargetTile(Tile tile, Flowfield path, boolean diagonals){
-        return getTargetTile(tile, path, diagonals, -1, 0);
-    }
-
-    /** Gets next tile to travel to. Main thread only. */
-    public @Nullable Tile getTargetTile(Tile tile, Flowfield path, boolean diagonals, int collisionLayer, int unitId){
         if(tile == null) return null;
 
         //uninitialized flowfields are not applicable
@@ -430,7 +390,6 @@ public class Pathfinder implements Runnable{
         int value = values[apos];
 
         var points = diagonals ? Geometry.d8 : Geometry.d4;
-        int[] avoid = collisionLayer == -1 ? null : avoidance[collisionLayer];
 
         Tile current = null;
         int tl = 0;
@@ -441,13 +400,11 @@ public class Pathfinder implements Runnable{
             if(other == null) continue;
 
             int packed = dx/res + dy/res * ww;
-            int avoidance = avoid == null || unitId == 0 ? 0 : avoid[packed] > Integer.MAX_VALUE - unitId ? 1 : 0;
-            int cost = values[packed] + avoidance;
 
-            if(cost < value && avoidance == 0 && (current == null || cost < tl) && path.passable(packed) &&
+            if(values[packed] < value && (current == null || values[packed] < tl) && path.passable(packed) &&
             !(point.x != 0 && point.y != 0 && (!path.passable(((tile.x + point.x)/res + tile.y/res*ww)) || !path.passable((tile.x/res + (tile.y + point.y)/res*ww))))){ //diagonal corner trap
                 current = other;
-                tl = cost;
+                tl = values[packed];
             }
         }
 
@@ -696,11 +653,6 @@ public class Pathfinder implements Runnable{
         /** @return the next tile to travel to for this flowfield. Main thread only. */
         public @Nullable Tile getNextTile(Tile from){
             return pathfinder.getTargetTile(from, this);
-        }
-
-        /** @return the next tile to travel to for this flowfield. Main thread only. */
-        public @Nullable Tile getNextTile(Tile from, int collisionlayer, int unitId){
-            return pathfinder.getTargetTile(from, this, true, collisionlayer, unitId);
         }
 
         public boolean hasCompleteWeights(){

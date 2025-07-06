@@ -1,10 +1,7 @@
 package mindustry.ai.types;
 
 import arc.math.*;
-import arc.util.*;
-import mindustry.*;
 import mindustry.ai.*;
-import mindustry.entities.*;
 import mindustry.entities.units.*;
 import mindustry.gen.*;
 import mindustry.world.*;
@@ -12,16 +9,11 @@ import mindustry.world.*;
 import static mindustry.Vars.*;
 
 public class GroundAI extends AIController{
-    float stuckTime = 0f;
-    float stuckX = -999f, stuckY = -999f;
-
-    static final float stuckThreshold = 1.5f * 60f;
 
     @Override
     public void updateMovement(){
 
         Building core = unit.closestEnemyCore();
-        boolean moved = false;
 
         if(core != null && unit.within(core, unit.range() / 1.3f + core.block.size * tilesize / 2f)){
             target = core;
@@ -46,9 +38,7 @@ public class GroundAI extends AIController{
                 move = false;
             }
 
-            moved = move;
-
-            if(move) pathfind(Pathfinder.fieldCore, true, stuckTime >= stuckThreshold);
+            if(move) pathfind(Pathfinder.fieldCore);
         }
 
         if(unit.type.canBoost && unit.elevation > 0.001f && !unit.onSolid()){
@@ -56,28 +46,5 @@ public class GroundAI extends AIController{
         }
 
         faceTarget();
-
-        if(moved){
-
-            if(unit.within(stuckX, stuckY, tilesize * 1.5f)){
-                stuckTime += Time.delta;
-                if(stuckTime - Time.delta < stuckThreshold && stuckTime >= stuckThreshold){
-                    float radius = unit.hitSize * Vars.unitCollisionRadiusScale * 2f;
-                    Units.nearby(unit.team, unit.x, unit.y, radius, other -> {
-                        if(other != unit && other.controller() instanceof GroundAI ai && other.within(unit.x, unit.y, radius + other.hitSize * unitCollisionRadiusScale)){
-                            ai.stuckX = other.x;
-                            ai.stuckY = other.y;
-                            ai.stuckTime = stuckThreshold + 1f;
-                        }
-                    });
-                }
-            }else{
-                stuckX = unit.x;
-                stuckY = unit.y;
-                stuckTime = 0f;
-            }
-        }else{
-            stuckTime = 0f;
-        }
     }
 }
