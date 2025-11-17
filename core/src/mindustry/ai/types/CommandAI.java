@@ -270,6 +270,7 @@ public class CommandAI extends AIController{
 
             Building targetBuild = world.buildWorld(targetPos.x, targetPos.y);
 
+
             //TODO: should the unit stop when it finds a target?
             if(
                 (hasStance(UnitStance.patrol) && !hasStance(UnitStance.pursueTarget) && target != null && unit.within(target, unit.type.range - 2f) && !unit.type.circleTarget) ||
@@ -346,7 +347,7 @@ public class CommandAI extends AIController{
             if(move){
                 if(unit.type.circleTarget && attackTarget != null){
                     target = attackTarget;
-                    circleAttack(unit.type.circleTargetRadius);
+                    circleAttack(80f);
                 }else{
                     moveTo(vecOut,
                     withinAttackRange ? engageRange :
@@ -361,7 +362,7 @@ public class CommandAI extends AIController{
                 attackTarget = null;
             }
 
-            if(unit.isFlying() && move && !(unit.type.circleTarget && !unit.type.omniMovement) && (attackTarget == null || !unit.within(attackTarget, unit.type.range))){
+            if(unit.isFlying() && move && (attackTarget == null || !unit.within(attackTarget, unit.type.range))){
                 unit.lookAt(vecMovePos);
             }else{
                 faceTarget();
@@ -378,11 +379,7 @@ public class CommandAI extends AIController{
             }
 
         }else if(target != null){
-            if(unit.type.circleTarget && shouldFire()){
-                circleAttack(unit.type.circleTargetRadius);
-            }else{
-                faceTarget();
-            }
+            faceTarget();
         }
     }
 

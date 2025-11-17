@@ -14,14 +14,14 @@ public class ArtilleryBulletType extends BasicBulletType{
         collidesAir = false;
         scaleLife = true;
         hitShake = 1f;
-        hitSound = Sounds.artilleryExplosion;
+        hitSound = Sounds.explosion;
         hitEffect = Fx.flakExplosion;
         shootEffect = Fx.shootBig;
         trailEffect = Fx.artilleryTrail;
 
         //default settings:
         shrinkX = 0.15f;
-        shrinkY = 0.5f;
+        shrinkY = 0.63f;
         shrinkInterp = Interp.slope;
 
         //for trail:
