@@ -64,7 +64,7 @@ public class EditorMapsDialog extends MapListDialog{
                             return;
                         }
 
-                        Map conflict = maps.all().find(m -> m.name().equalsIgnoreCase(name));
+                        Map conflict = maps.all().find(m -> m.name().equals(name));
 
                         if(conflict != null && !conflict.custom){
                             ui.showInfo(Core.bundle.format("editor.import.exists", name));

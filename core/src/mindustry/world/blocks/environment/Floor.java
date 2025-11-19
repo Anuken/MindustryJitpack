@@ -68,8 +68,6 @@ public class Floor extends Block{
     public Block decoration = Blocks.air;
     /** Whether units can draw shadows over this. */
     public boolean canShadow = true;
-    /** If true, this floor ignores the obstructsLight flag of overlays. */
-    public boolean forceDrawLight = false;
     /** Whether this overlay needs a surface to be on. False for floating blocks, like spawns. */
     public boolean needsSurface = true;
     /** If true, cores can be placed on this floor. */
@@ -112,7 +110,6 @@ public class Floor extends Block{
         allowRectanglePlacement = true;
         instantBuild = true;
         ignoreBuildDarkness = true;
-        obstructsLight = false;
         placeEffect = Fx.rotateBlock;
     }
 
