@@ -9,8 +9,6 @@ public class Seaweed extends Prop{
 
     public Seaweed(String name){
         super(name);
-
-        obstructsLight = false;
     }
 
     @Override

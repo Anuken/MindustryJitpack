@@ -56,7 +56,6 @@ public abstract class LegacySaveVersion extends LegacyRegionSaveVersion{
                 //do not override occupied cells
                 if(!occupied){
                     tile.setBlock(block);
-                    if(tile.build != null) tile.build.enabled = true;
                 }
 
                 if(block.hasBuilding()){

@@ -35,8 +35,6 @@ public class LogicBlock extends Block{
     private static final int maxLinks = 6000;
     public static final int maxNameLength = 32;
 
-    private static final IntSet usedBuildings = new IntSet();
-
     public int maxInstructionScale = 5;
     public int instructionsPerTick = 1;
     //privileged only
@@ -270,7 +268,6 @@ public class LogicBlock extends Block{
                         stream.readInt();
                     }
                 }else{
-                    usedBuildings.clear();
                     for(int i = 0; i < total; i++){
                         String name = stream.readUTF();
                         short x = stream.readShort(), y = stream.readShort();
@@ -283,9 +280,6 @@ public class LogicBlock extends Block{
                         Building build = world.build(x, y);
 
                         if(build != null){
-                            if(!usedBuildings.add(build.id)){
-                                continue;
-                            }
                             String bestName = getLinkName(build.block);
                             if(!name.startsWith(bestName)){
                                 name = findLinkName(build.block);
