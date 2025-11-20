@@ -30,8 +30,7 @@ import static mindustry.Vars.*;
 public class LaunchPad extends Block{
     /** Time between launches. */
     public float launchTime = 1f;
-    public float launchSoundPitchRand = 0.1f;
-    public Sound launchSound = Sounds.padLaunch;
+    public Sound launchSound = Sounds.none;
 
     public @Load("@-light") TextureRegion lightRegion;
     public @Load(value = "@-pod", fallback = "launchpod") TextureRegion podRegion;
@@ -146,7 +145,7 @@ public class LaunchPad extends Block{
             if((launchCounter += edelta()) >= launchTime && items.total() >= itemCapacity){
                 //if there are item requirements, use those.
                 consume();
-                launchSound.at(x, y, 1f + Mathf.range(launchSoundPitchRand));
+                launchSound.at(x, y);
                 LaunchPayload entity = LaunchPayload.create();
                 items.each((item, amount) -> entity.stacks.add(new ItemStack(item, amount)));
                 entity.set(this);

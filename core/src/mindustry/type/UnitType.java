@@ -93,8 +93,6 @@ public class UnitType extends UnlockableContent implements Senseable{
     mineRange = 70f,
     /** range at which this unit can build */
     buildRange = Vars.buildingRange,
-    /** radius for circleTarget, if true */
-    circleTargetRadius = 80f,
     /** multiplier for damage this (flying) unit deals when crashing on enemy things */
     crashDamageMultiplier = 1f,
     /** multiplier for health that this flying unit has for its wreck, based on its max health. */
@@ -300,10 +298,6 @@ public class UnitType extends UnlockableContent implements Senseable{
     public Sound loopSound = Sounds.none;
     /** volume of loop sound */
     public float loopSoundVolume = 0.5f;
-    /** sound played when this mech unit does a step */
-    public Sound stepSound = Sounds.none;
-    /** volume of step sound */
-    public float stepSoundVolume = 0.5f;
     /** effect that this unit emits when falling */
     public Effect fallEffect = Fx.fallSmoke;
     /** effect created at engine when unit falls. */
@@ -1357,7 +1351,7 @@ public class UnitType extends UnlockableContent implements Senseable{
         if(stacks != null){
             ItemStack[] out = new ItemStack[stacks.length];
             for(int i = 0; i < out.length; i++){
-                out[i] = new ItemStack(stacks[i].item, UI.roundAmount((int)(stacks[i].amount * researchCostMultiplier)));
+                out[i] = new ItemStack(stacks[i].item, UI.roundAmount((int)(Math.pow(stacks[i].amount, 1.1) * researchCostMultiplier)));
             }
 
             //remove zero-requirements for automatic unlocks

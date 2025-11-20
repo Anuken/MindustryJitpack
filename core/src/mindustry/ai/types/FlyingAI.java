@@ -19,7 +19,7 @@ public class FlyingAI extends AIController{
 
         if(target != null && unit.hasWeapons()){
             if(unit.type.circleTarget){
-                circleAttack(unit.type.circleTargetRadius);
+                circleAttack(120f);
             }else{
                 moveTo(target, unit.type.range * 0.8f);
                 unit.lookAt(target);

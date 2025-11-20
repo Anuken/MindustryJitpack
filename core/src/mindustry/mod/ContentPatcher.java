@@ -22,7 +22,7 @@ import java.util.*;
 
 /** The current implementation is awful. Consider it a proof of concept. */
 @SuppressWarnings("unchecked")
-public class DataPatcher{
+public class ContentPatcher{
     private static final Object root = new Object();
     private static final ObjectMap<String, ContentType> nameToType = new ObjectMap<>();
     private static ContentParser parser = createParser();
@@ -129,8 +129,6 @@ public class DataPatcher{
         if(!Vars.headless){
             if(object instanceof DrawPart part && parent instanceof MappableContent cont){
                 part.load(cont.name);
-            }else if(object instanceof DrawPart part && parent instanceof Weapon w){
-                part.load(w.name);
             }else if(object instanceof DrawBlock draw && parent instanceof Block block){
                 draw.load(block);
             }else if(object instanceof Weapon weapon){
