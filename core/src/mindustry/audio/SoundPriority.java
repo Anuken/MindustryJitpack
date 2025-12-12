@@ -3,6 +3,7 @@ package mindustry.audio;
 import arc.*;
 import arc.audio.*;
 import arc.struct.*;
+import mindustry.*;
 
 import static mindustry.gen.Sounds.*;
 
@@ -11,7 +12,16 @@ public class SoundPriority{
     static int lastGroup = 1;
 
     public static void init(){
+        //launching should not get interrupted by the loading screen
+        coreLaunch.setBus(Vars.control.sound.uiBus);
+
         max(7, beamPlasma, shootMeltdown, beamMeltdown);
+
+        //priority 3: absolutely do not interrupt these
+        set(
+        3f,
+        acceleratorLaunch, acceleratorCharge, coreLand, coreLaunch
+        );
 
         //priority 2: long weapon loops and big explosions
         set(
