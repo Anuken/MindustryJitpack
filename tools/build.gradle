@@ -136,8 +136,9 @@ task pack(dependsOn: [classes, configurations.runtimeClasspath]){
 
         //run generation task; generate all needed sprites
         file(genFolder).mkdirs()
-        javaexec{
-            main = "mindustry.tools.ImagePacker"
+
+        project.services.get(ExecOperations).javaexec{
+            mainClass = "mindustry.tools.ImagePacker"
             classpath = sourceSets.main.runtimeClasspath
             workingDir = genFolder
         }
