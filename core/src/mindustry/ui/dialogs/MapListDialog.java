@@ -2,7 +2,6 @@ package mindustry.ui.dialogs;
 
 import arc.*;
 import arc.graphics.*;
-import arc.input.KeyCode;
 import arc.scene.style.*;
 import arc.scene.ui.*;
 import arc.scene.ui.layout.*;
@@ -108,7 +107,7 @@ public abstract class MapListDialog extends BaseDialog{
         int i = 0;
 
         Seq<Map> mapList = new Seq<>();
-        
+
         if(showCustom) mapList.addAll(maps.customMaps());
         if(showBuiltIn) mapList.addAll(maps.defaultMaps());
         if(showModded) mapList.addAll(maps.moddedMaps());
@@ -224,7 +223,7 @@ public abstract class MapListDialog extends BaseDialog{
                             }
                             Core.settings.put("editorprioritizecustom", prioritizeCustom);
                             rebuildMaps();
-                        }).size(60f).checked(b-> showCustom && prioritizeCustom).tooltip("@editor.filters.prioritizecustom").disabled(b -> !showCustom);
+                        }).size(60f).checked(b -> showCustom && prioritizeCustom).tooltip("@editor.filters.prioritizecustom").disabled(b -> !showCustom);
                         right.button(ui.getIcon("hammer"), Styles.emptyTogglei, () -> {
                             prioritizeModded = !prioritizeModded;
                             if(prioritizeCustom){
