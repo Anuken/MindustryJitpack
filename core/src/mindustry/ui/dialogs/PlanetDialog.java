@@ -414,10 +414,7 @@ public class PlanetDialog extends BaseDialog implements PlanetInterfaceRenderer{
     boolean canSelect(Sector sector){
         if(mode == select) return sector.hasBase() && launchSector != null && sector.planet == launchSector.planet;
 
-        //sectors with addStartingItems = true can't be landed on, as they override the core and items of the interplanetary accelerator
-        //at the moment, this is only true of Ground Zero in vanilla
-        //TODO: maybe relax these restrictions and add better support for these sorts of "tutorial" starting sectors later
-        if(mode == planetLaunch && (sector.hasBase() || (sector.preset != null && sector.preset.addStartingItems))) return false;
+        if(mode == planetLaunch && sector.hasBase()) return false;
 
         if(sector.planet.generator == null) return false;
 

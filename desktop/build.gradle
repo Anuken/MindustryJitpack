@@ -152,7 +152,7 @@ platforms.each{ platform ->
                 args += "XX:+UseCompactObjectHeaders"
                 args += "enable-native-access=ALL-UNNAMED"
 
-                project.services.get(ExecOperations).exec{
+                exec{
                     commandLine args.toList()
                     standardOutput = System.out
                 }

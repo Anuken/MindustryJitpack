@@ -252,6 +252,11 @@ public class HintsFragment{
             () -> indexer.getFlagged(state.rules.defaultTeam, BlockFlag.extinguisher).size > 0
         ),
 
+        generator(
+            () -> control.input.block == Blocks.combustionGenerator,
+            () -> ui.hints.placedBlocks.contains(Blocks.combustionGenerator)
+        ),
+
         rebuildSelect(
             () -> state.rules.defaultTeam.data().plans.size >= 10,
             () -> control.input.isRebuildSelecting()

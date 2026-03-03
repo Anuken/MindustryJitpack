@@ -508,7 +508,6 @@ public class SerpuloTechTree{
                                                 new SectorComplete(overgrowth),
                                                 new SectorComplete(extractionOutpost),
                                                 new SectorComplete(saltFlats),
-                                                new SectorComplete(mycelialBastion),
                                                 new Research(risso),
                                                 new Research(minke),
                                                 new Research(bryde),

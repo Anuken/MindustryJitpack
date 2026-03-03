@@ -276,7 +276,6 @@ public class Styles{
             imageCheckedColor = Color.white;
             imageDownColor = Color.white;
             imageUpColor = Color.gray;
-            imageDisabledColor = Color.darkGray;
         }};
         selecti = new ImageButtonStyle(){{
             checked = buttonSelect;

@@ -1,7 +1,6 @@
 package mindustry.entities.comp;
 
 import arc.*;
-import arc.audio.*;
 import arc.math.*;
 import arc.scene.ui.layout.*;
 import arc.struct.*;
@@ -106,7 +105,6 @@ abstract class PayloadComp implements Posc, Rotc, Hitboxc, Unitc{
         if(Vars.net.client()){
             Vars.netClient.clearRemovedEntity(unit.id);
         }
-        Sounds.payloadPickup.at(self(), Mathf.random(0.9f, 1.1f));
         Events.fire(new PickupEvent(self(), unit));
     }
 
@@ -116,7 +114,6 @@ abstract class PayloadComp implements Posc, Rotc, Hitboxc, Unitc{
         tile.afterPickedUp();
         addPayload(new BuildPayload(tile));
         Fx.unitPickup.at(tile);
-        Sounds.payloadPickup.at(self());
         Events.fire(new PickupEvent(self(), tile));
     }
 
@@ -180,11 +177,6 @@ abstract class PayloadComp implements Posc, Rotc, Hitboxc, Unitc{
         if(!u.isAdded()) u.team.data().updateCount(u.type, -1);
         u.add();
         u.unloaded();
-        Sound dropSound =
-            payload.size() <= 12f ? Sounds.payloadDrop1 :
-            payload.size() <= 20f ? Sounds.payloadDrop2 :
-            Sounds.payloadDrop3;
-        dropSound.at(self(), Mathf.random(0.9f, 1.1f));
         Events.fire(new PayloadDropEvent(self(), u));
 
         return true;
@@ -205,7 +197,6 @@ abstract class PayloadComp implements Posc, Rotc, Hitboxc, Unitc{
 
             Fx.unitDrop.at(tile);
             on.block().placeEffect.at(on.drawx(), on.drawy(), on.block().size);
-            on.block().placeSound.at(tile);
             return true;
         }
 

@@ -102,7 +102,7 @@ static void antialias(File file){
     new Fi(file).writePng(out)
 }
 
-tasks.register('antialiasImages'){
+task antialiasImages(){
     doLast{
         for(def img : project.getProperty("images").split(",")){
             println(project.getProperty("startdir") + "/" + img)
@@ -111,7 +111,7 @@ tasks.register('antialiasImages'){
     }
 }
 
-tasks.register('tileImages'){
+task tileImages(){
     doLast{
         for(def img : project.getProperty("images").split(",")){
             println(project.getProperty("startdir") + "/" + img)
@@ -120,8 +120,7 @@ tasks.register('tileImages'){
     }
 }
 
-tasks.register('pack'){
-    dependsOn = [classes, configurations.runtimeClasspath]
+task pack(dependsOn: [classes, configurations.runtimeClasspath]){
 
     doLast{
         //cleanup old sprites
@@ -137,9 +136,8 @@ tasks.register('pack'){
 
         //run generation task; generate all needed sprites
         file(genFolder).mkdirs()
-
-        project.services.get(ExecOperations).javaexec{
-            mainClass = "mindustry.tools.ImagePacker"
+        javaexec{
+            main = "mindustry.tools.ImagePacker"
             classpath = sourceSets.main.runtimeClasspath
             workingDir = genFolder
         }
@@ -190,8 +188,7 @@ tasks.register('pack'){
     }
 }
 
-tasks.register('genSprites', JavaExec){
-    dependsOn classes
+task genSprites(dependsOn: classes, type: JavaExec){
     finalizedBy 'antialiasGen'
 
     mainClass = "mindustry.tools.ImagePacker"
@@ -200,8 +197,7 @@ tasks.register('genSprites', JavaExec){
     workingDir = genFolder
 }
 
-tasks.register('fontgen', JavaExec){
-    dependsOn classes
+task fontgen(dependsOn: classes, type: JavaExec){
     /* icon font pipeline:
      1. take set of pre-defined icons and SVGs
      2. use Fontello API to get a font with these
@@ -236,32 +232,30 @@ tasks.register('fontgen', JavaExec){
         //TODO this is broken
 
         Log.info(OS.exec("fontforge", "-script",
-                Fi.get("core/assets-raw/fontgen/merge.pe").absolutePath(),
-                Fi.get("core/assets/fonts/font.woff").absolutePath(),
-                Fi.get("core/assets-raw/fontgen/out/font.woff").absolutePath())
+            Fi.get("core/assets-raw/fontgen/merge.pe").absolutePath(),
+            Fi.get("core/assets/fonts/font.woff").absolutePath(),
+            Fi.get("core/assets-raw/fontgen/out/font.woff").absolutePath())
         )
 
         Log.info("Done.")
     }
 }
 
-tasks.register('icongen', JavaExec){
-    dependsOn classes
+task icongen(dependsOn: classes, type: JavaExec){
     mainClass = "mindustry.tools.IconConverter"
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
     workingDir = "../core/assets-raw"
 }
 
-tasks.register('updateScripts', JavaExec){
-    dependsOn classes
+task updateScripts(dependsOn: classes, type: JavaExec){
     mainClass = "mindustry.tools.ScriptMainGenerator"
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
     workingDir = "../"
 }
 
-tasks.register('updateBundles'){
+task updateBundles{
     doLast{
         def uniEscape = { String string ->
             StringBuilder outBuffer = new StringBuilder()
@@ -269,12 +263,12 @@ tasks.register('updateBundles'){
             for(int i = 0; i < len; i++){
                 char ch = string.charAt(i)
                 if((ch > 61) && (ch < 127)){
-                    outBuffer.append(ch == (char) '\\' ? "\\\\" : ch)
+                    outBuffer.append(ch == (char)'\\' ? "\\\\" : ch)
                     continue
                 }
 
                 if(ch >= 0xE000 && ch <= 0xF8FF){
-                    String hex = Integer.toHexString((int) ch)
+                    String hex = Integer.toHexString((int)ch)
                     outBuffer.append("\\u")
                     for(int j = 0; j < 4 - hex.length(); j++){
                         outBuffer.append('0')
