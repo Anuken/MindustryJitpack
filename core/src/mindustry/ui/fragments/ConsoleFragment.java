@@ -29,7 +29,7 @@ public class ConsoleFragment extends Table{
     private Font font;
     private GlyphLayout layout = new GlyphLayout();
     private float offsetx = Scl.scl(4), offsety = Scl.scl(4), fontoffsetx = Scl.scl(2), chatspace = mobile ? Scl.scl(60) : Scl.scl(50);
-    private Color shadowColor = new Color(0, 0, 0, mobile ? 0.7f : 0.4f);
+    private Color shadowColor = new Color(0, 0, 0, 0.7f);
     private float textspacing = Scl.scl(10);
     private Seq<String> history = new Seq<>();
     private int historyPos = 0;
@@ -54,10 +54,7 @@ public class ConsoleFragment extends Table{
                 clearChatInput();
             }
 
-            //there is no button to hide the console outside of the in-game state
-            if(mobile && !state.isGame()){
-                shown = false;
-            }
+            if(mobile) open = false;
 
             return shown;
         });
@@ -132,6 +129,9 @@ public class ConsoleFragment extends Table{
                     Log.err(e);
                 }
             })).size(s).padLeft(4f);
+
+            button(Icon.cancel, Styles.cleari, () -> shown = false).size(s).padLeft(4f);
+
         }else{
             add(chatfield).padBottom(offsety).padLeft(offsetx).growX().padRight(offsetx).height(28);
         }
