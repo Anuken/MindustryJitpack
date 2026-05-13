@@ -5067,7 +5067,7 @@ public class Blocks{
                 despawnEffect = hitEffect = new ExplosionEffect(){{
                     waveColor = Pal.surge;
                     smokeColor = Color.gray;
-                    sparkColor = Pal.sap;
+                    sparkColor = Pal.surge;
                     waveStroke = 4f;
                     waveRad = 40f;
                 }};
