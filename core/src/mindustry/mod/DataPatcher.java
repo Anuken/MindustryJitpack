@@ -1,5 +1,6 @@
 package mindustry.mod;
 
+import arc.files.*;
 import arc.func.*;
 import arc.struct.*;
 import arc.util.*;
@@ -13,6 +14,7 @@ import mindustry.ctype.*;
 import mindustry.entities.part.*;
 import mindustry.entities.units.*;
 import mindustry.gen.*;
+import mindustry.graphics.*;
 import mindustry.type.*;
 import mindustry.world.*;
 import mindustry.world.blocks.*;
@@ -20,12 +22,14 @@ import mindustry.world.consumers.*;
 import mindustry.world.draw.*;
 import mindustry.world.meta.*;
 
+import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
 
 /** The current implementation is awful. Consider it a proof of concept. */
 @SuppressWarnings("unchecked")
 public class DataPatcher{
+    private static final int maxImageSize = 1024;
     private static final Object root = new Object();
     private static final ObjectMap<String, ContentType> nameToType = new ObjectMap<>();
     private static ContentParser parser = createParser();
@@ -40,6 +44,8 @@ public class DataPatcher{
 
     /** Currently active patches. Note that apply() should be called after modification. */
     public Seq<PatchSet> patches = new Seq<>();
+    public Seq<PatchImage> images = new Seq<>();
+    public DataPatchPacker packer = new DataPatchPacker();
 
     static{
         for(var type : ContentType.all){
@@ -65,6 +71,12 @@ public class DataPatcher{
 
     public boolean isPatched(Object object){
         return usedpatches.contains(object);
+    }
+
+    public void applyImages(Seq<PatchImage> images){
+        this.images = images;
+
+        if(!Vars.headless) packer.pack(images);
     }
 
     /** Applies the specified patches. If patches were already applied, the previous ones are un-applied - they do not stack! */
@@ -130,6 +142,8 @@ public class DataPatcher{
 
     public void unapply(){
         if(!applied) return;
+
+        if(!Vars.headless) packer.unapply();
 
         Vars.content = contentLoader;
         applied = false;
@@ -666,6 +680,42 @@ public class DataPatcher{
             ", elementType=" + elementType +
             ", keyType=" + keyType +
             '}';
+        }
+    }
+
+    public static class PatchImage{
+        /** Image path, excluding extension. */
+        public String name;
+        /** Size of encoded image. */
+        public int width, height;
+        /** Encoded PNG data. */
+        public byte[] data;
+
+        public PatchImage(String name, int width, int height, byte[] data){
+            this.name = name;
+            this.width = width;
+            this.height = height;
+            this.data = data;
+        }
+
+        public static PatchImage fromFile(String relativePath, Fi file) throws IOException{
+            byte[] data = file.readBytes();
+            int width, height;
+            //perform basic validation and fetch size from IHDR chunk
+            try(DataInputStream in = new DataInputStream(new ByteArrayInputStream(data))){
+                long header = in.readLong();
+                if(header != 0x89504e470d0a1a0aL){
+                    throw new IOException("File is not a PNG.");
+                }
+                in.readInt(); //length
+                int type = in.readInt(); //chunk type
+                if(type != 0x49484452) throw new IOException("PNG files must begin with a IHDR chunk.");
+                width = in.readInt();
+                height = in.readInt();
+                if(width <= 0 || height <= 0) throw new IOException("PNG size must be positive.");
+                if(width > maxImageSize || height > maxImageSize) throw new IOException("PNG is larger than maximum image size (" + maxImageSize + "x" + maxImageSize + ")");
+            }
+            return new PatchImage(relativePath, width, height, data);
         }
     }
 
