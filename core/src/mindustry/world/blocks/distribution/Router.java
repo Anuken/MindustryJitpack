@@ -22,8 +22,6 @@ public class Router extends Block{
         group = BlockGroup.transportation;
         unloadable = false;
         noUpdateDisabled = true;
-        drawCached = true;
-        drawDynamic = false;
     }
 
     public class RouterBuild extends Building implements ControlBlock{

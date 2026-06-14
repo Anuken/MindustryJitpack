@@ -246,7 +246,7 @@ public class EditorRenderer implements Disposable{
         tmpTiles.clear();
 
         if(!cache.isEmpty()){
-            cache.build(SpriteIndices.get());
+            cache.build(renderer.blocks.floor.getIndexData());
             chunks[cx][cy] = cache;
         }
     }

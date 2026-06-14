@@ -81,7 +81,6 @@ public class AutoDoor extends Wall{
                 (!open ? closefx : openfx).at(this, size);
                 doorSound.at(this);
             }
-            recache();
         }
 
         @Override
