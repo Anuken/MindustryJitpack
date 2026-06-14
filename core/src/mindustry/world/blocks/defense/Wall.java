@@ -57,10 +57,6 @@ public class Wall extends Block{
     @Override
     public void init(){
         if(size == 2 && destroySound == Sounds.unset) destroySound = Sounds.blockExplodeWall;
-        if(!flashHit){
-            drawDynamic = false;
-        }
-        drawCached = true;
         super.init();
     }
 
@@ -73,15 +69,13 @@ public class Wall extends Block{
         public float hit;
 
         @Override
-        public void drawCached(){
-            super.draw();
-        }
-
-        @Override
         public void draw(){
+            super.draw();
 
             //draw flashing white overlay if enabled
-            if(flashHit && hit >= 0.001f){
+            if(flashHit){
+                if(hit < 0.0001f) return;
+
                 Draw.color(flashColor);
                 Draw.alpha(hit * 0.5f);
                 Draw.blend(Blending.additive);
