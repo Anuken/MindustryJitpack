@@ -289,7 +289,7 @@ public class Turret extends ReloadTurret{
         public @Nullable Posc target;
         public Vec2 targetPos = new Vec2();
         public BlockUnitc unit = (BlockUnitc)UnitTypes.block.create(team);
-        public boolean wasShooting, isShooting;
+        public boolean wasShooting;
         public int queuedBullets = 0;
 
         public float heatReq;
@@ -362,7 +362,7 @@ public class Turret extends ReloadTurret{
 
         @Override
         public boolean shouldConsume(){
-            return isShooting || reloadCounter < reload;
+            return isShooting() || reloadCounter < reload;
         }
 
         @Override
@@ -410,7 +410,7 @@ public class Turret extends ReloadTurret{
                 case rotation -> rotation;
                 case shootX -> World.conv(targetPos.x);
                 case shootY -> World.conv(targetPos.y);
-                case shooting -> isShooting ? 1 : 0;
+                case shooting -> isShooting() ? 1 : 0;
                 case progress -> progress();
                 default -> super.sense(sensor);
             };
@@ -427,7 +427,7 @@ public class Turret extends ReloadTurret{
         }
 
         public boolean isShooting(){
-            return isShooting;
+            return alwaysShooting || (unit.controller() instanceof Player ? unit.isShooting() : logicControlled() ? logicShooting : target != null);
         }
 
         @Override
@@ -436,10 +436,6 @@ public class Turret extends ReloadTurret{
             unit.tile(this);
             unit.team(team);
             return (Unit)unit;
-        }
-
-        public boolean controlled(){
-            return unit.isPlayer();
         }
 
         public boolean logicControlled(){
@@ -489,7 +485,6 @@ public class Turret extends ReloadTurret{
         @Override
         public void updateTile(){
             if(!validateTarget()) target = null;
-            isShooting = alwaysShooting || (unit.controller() instanceof Player ? unit.isShooting() : logicControlled() ? logicShooting : target != null);
 
             if(unit.isPlayer()){ //there's no reason to update this when a player isn't controlling it
                 unit.ammo(getAmmoFraction());
@@ -499,8 +494,8 @@ public class Turret extends ReloadTurret{
                 soundLoop.update(x, y, shouldActiveSound(), activeSoundVolume());
             }
 
-            float warmupTarget = (isShooting && canConsume()) || charging() ? 1f : 0f;
-            if(warmupTarget > 0 && !controlled()){
+            float warmupTarget = (isShooting() && canConsume()) || charging() ? 1f : 0f;
+            if(warmupTarget > 0 && !isControlled()){
                 warmupHold = 1f;
             }
             if(warmupHold > 0f){
@@ -573,7 +568,7 @@ public class Turret extends ReloadTurret{
                 if(validateTarget()){
                     boolean canShoot;
 
-                    if(controlled()){ //player behavior
+                    if(isControlled()){ //player behavior
                         targetPos.set(unit.aimX(), unit.aimY());
                         canShoot = unit.isShooting();
                     }else if(logicControlled()){ //logic behavior
@@ -585,7 +580,7 @@ public class Turret extends ReloadTurret{
                         canShoot = within(target, range() + (target instanceof Sized hb ? hb.hitSize()/1.9f : 0f));
                     }
 
-                    if(!controlled()){
+                    if(!isControlled()){
                         unit.aimX(targetPos.x);
                         unit.aimY(targetPos.y);
                     }
@@ -629,7 +624,7 @@ public class Turret extends ReloadTurret{
         }
 
         protected boolean validateTarget(){
-            return !Units.invalidateTarget(target, canHeal() ? Team.derelict : team, x, y) || controlled() || logicControlled();
+            return !Units.invalidateTarget(target, canHeal() ? Team.derelict : team, x, y) || unit.isPlayer() || logicControlled();
         }
 
         protected boolean canHeal(){

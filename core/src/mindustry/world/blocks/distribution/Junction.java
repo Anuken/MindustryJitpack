@@ -51,8 +51,16 @@ public class Junction extends Block{
         }
 
         @Override
-        public void updateTile(){
+        public void addToList(){
+            state.buildings.junctions.add(this);
+        }
 
+        @Override
+        public void removeFromList(){
+            state.buildings.junctions.remove(this);
+        }
+
+        public final void updateJunction(){
             for(int i = 0; i < 4; i++){
                 if(buffer.indexes[i] > 0){
                     if(buffer.indexes[i] > capacity) buffer.indexes[i] = capacity;

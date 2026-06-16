@@ -199,7 +199,7 @@ public class ItemBridge extends Block{
         public IntSeq incoming = new IntSeq(false, 4);
         public float warmup;
         public float time = -8f, timeSpeed;
-        public boolean wasMoved, moved, hadValidLink;
+        public boolean wasMoved, moved;
         public float transportCounter;
 
         @Override
@@ -316,6 +316,16 @@ public class ItemBridge extends Block{
         }
 
         @Override
+        public void addToList(){
+            state.buildings.itemBridges.add(this);
+        }
+
+        @Override
+        public void removeFromList(){
+            state.buildings.itemBridges.remove(this);
+        }
+
+        @Override
         public void updateTile(){
             if(timer(timerCheckMoved, 30f)){
                 wasMoved = moved;
@@ -330,9 +340,7 @@ public class ItemBridge extends Block{
             checkIncoming();
 
             Tile other = world.tile(link);
-            hadValidLink = linkValid(tile, other);
-
-            if(!hadValidLink){
+            if(!linkValid(tile, other)){
                 doDump();
                 warmup = 0f;
             }else{
@@ -493,7 +501,7 @@ public class ItemBridge extends Block{
 
         @Override
         public boolean shouldConsume(){
-            return hadValidLink && enabled;
+            return linkValid(tile, world.tile(link)) && enabled;
         }
 
         @Override

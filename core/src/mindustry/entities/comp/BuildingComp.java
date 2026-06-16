@@ -47,16 +47,20 @@ import java.util.*;
 
 import static mindustry.Vars.*;
 
-@EntityDef(value = {Buildingc.class}, excludeGroups = {"all"}, isFinal = false, genio = false, serialize = false)
+@EntityDef(value = {Buildingc.class}, excludeGroups = {"all", "build"}, isFinal = false, genio = false, serialize = false)
 @Component(base = true, genInterface = false)
 abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, QuadTreeObject, Displayable, Sized, Senseable, Controllable, Settable{
     //region vars and initialization
-    static final float recentDamageTime = 60f * 5f;
+    static final float timeToSleep = 60f * 1, recentDamageTime = 60f * 5f;
     static final ObjectSet<Building> tmpTiles = new ObjectSet<>();
     static final Seq<Building> tempBuilds = new Seq<>();
     static final BuildTeamChangeEvent teamChangeEvent = new BuildTeamChangeEvent();
     static final BuildDamageEvent bulletDamageEvent = new BuildDamageEvent();
+    static int sleepingEntities = 0;
 
+    transient int buildingArrayIndex = -1;
+
+    @Import boolean added;
     @Import float x, y, health, maxHealth;
     @Import Team team;
     @Import boolean dead;
@@ -93,10 +97,14 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
     transient float lastHealTime = -120f * 10f;
     transient Color suppressColor = Pal.sapBullet;
 
+    transient volatile boolean hadTimeScale = false;
+    transient float timeScale = 1f, timeScaleDuration;
+
     private transient float lastDamageTime = -recentDamageTime;
-    private transient float timeScale = 1f, timeScaleDuration;
     private transient float dumpAccum;
 
+    private transient boolean sleeping;
+    private transient float sleepTime;
     private transient boolean initialized;
 
     //used only by the indexer
@@ -151,11 +159,46 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
         return self();
     }
 
+    @Replace
     @Override
     public void add(){
+        //there is no need for a 'is added' guard since it is injected regardless of whether the method is replaced
+
+        addToList();
         if(power != null){
-            power.graph.checkAdd();
+            power.graph.addUpdate();
         }
+
+        //note: removal is automatic and thus not necessary in remove()
+        if(block.ambientSound != Sounds.none){
+            state.buildings.addAmbientSound(self());
+        }
+
+        if(this instanceof LiquidUpdater l){
+            state.buildings.addLiquidUpdater(l);
+        }
+
+        added = true;
+    }
+
+    @Replace
+    @Override
+    public void remove(){
+        removeFromList();
+        added = false;
+    }
+
+    public void removeFromList(){
+        state.buildings.buildings.remove(self());
+    }
+
+    public void addToList(){
+        state.buildings.buildings.add(self());
+    }
+
+    //used in clear()
+    public void markRemoved(){
+        added = false;
     }
 
     @Override
@@ -456,12 +499,16 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
 
     /** Sets the time scale of the building to the given intensity, unless it's above that value */
     public void applyBoost(float intensity, float duration){
-        if(!block.canOverdrive) return;
+        if(!block.canOverdrive || duration <= 0f) return;
+
         //do not refresh time scale when getting a lower intensity
         if(intensity >= this.timeScale - 0.001f){
             timeScaleDuration = Math.max(timeScaleDuration, duration);
         }
         timeScale = Math.max(timeScale, intensity);
+        if(!hadTimeScale){
+            state.buildings.addTimeScaled(self());
+        }
     }
 
     /** Sets the time scale of the building to the given intensity, unless it's below that value */
@@ -471,6 +518,9 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
             timeScaleDuration = Math.max(timeScaleDuration, duration);
         }
         timeScale = Math.min(timeScale, intensity);
+        if(!hadTimeScale){
+            state.buildings.addTimeScaled(self());
+        }
     }
 
     public void applyHealSuppression(float amount){
@@ -640,13 +690,21 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
 
     /** Call when nothing is happening to the entity. This increments the internal sleep timer. */
     public void sleep(){
-       remove();
+        sleepTime += Time.delta;
+        if(!sleeping && sleepTime >= timeToSleep){
+            remove();
+            sleeping = true;
+            sleepingEntities++;
+        }
     }
 
     /** Call when this entity is updating. This wakes it up. */
     public void noSleep(){
-        if(block.update){
+        sleepTime = 0f;
+        if(sleeping){
             add();
+            sleeping = false;
+            sleepingEntities--;
         }
     }
 
@@ -2225,30 +2283,30 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
 
     public void checkAllowUpdate(){
         if(!allowUpdate()){
-            enabled = false;
+            setEnabled(false);
         }
+    }
+
+    public void setEnabled(boolean enable){
+        if(this.enabled == enable) return;
+
+        if(block.update && block.noUpdateDisabled){
+            if(enable){
+                add();
+            }else{
+                remove();
+            }
+        }
+        this.enabled = enable;
     }
 
     @Final
     @Replace
     @Override
     public void update(){
-
-        //TODO refactor to separate loop?
-        if((timeScaleDuration -= Time.delta) <= 0f){
-            timeScale = 1f;
-        }
-
-        //TODO separate multithreaded system for sound? AudioSource, etc
-        if(!headless && block.ambientSound != Sounds.none && shouldAmbientSound()){
-            control.sound.loop(block.ambientSound, self(), block.ambientSoundVolume * ambientVolume());
-        }
-
         updateConsumption();
 
-        if(enabled || !block.noUpdateDisabled){
-            updateTile();
-        }
+        updateTile();
     }
 
     /** When a block is newly revealed outside of camera view range, it is updated on the minimap. */
