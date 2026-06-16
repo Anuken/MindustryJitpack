@@ -316,19 +316,7 @@ public class ItemBridge extends Block{
         }
 
         @Override
-        public void addToList(){
-            state.buildings.itemBridges.add(this);
-        }
-
-        @Override
-        public void removeFromList(){
-            state.buildings.itemBridges.remove(this);
-        }
-
-        @Override
         public void updateTile(){
-            if(!enabled) return;
-
             if(timer(timerCheckMoved, 30f)){
                 wasMoved = moved;
                 moved = false;

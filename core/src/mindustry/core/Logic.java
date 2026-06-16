@@ -302,7 +302,6 @@ public class Logic implements ApplicationListener{
         Events.fire(new ResetEvent());
         world.tiles = new Tiles(0, 0);
 
-        state.buildings.clear();
         state.data.unload();
         State prev = state.getState();
         //recreate gamestate - sets state to menu
@@ -564,11 +563,6 @@ public class Logic implements ApplicationListener{
                 state.envAttrs.clear();
                 state.envAttrs.add(state.rules.attributes);
                 Groups.weather.each(w -> state.envAttrs.add(w.weather.attrs, w.opacity));
-
-                //TODO: possible side effects of buildings before after all bullets do?
-                PerfCounter.buildingUpdate.begin();
-                state.buildings.update();
-                PerfCounter.buildingUpdate.end();
 
                 PerfCounter.entityUpdate.begin();
                 Groups.update();

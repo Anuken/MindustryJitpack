@@ -47,7 +47,7 @@ import java.util.*;
 
 import static mindustry.Vars.*;
 
-@EntityDef(value = {Buildingc.class}, excludeGroups = {"all", "build"}, isFinal = false, genio = false, serialize = false)
+@EntityDef(value = {Buildingc.class}, excludeGroups = {"all"}, isFinal = false, genio = false, serialize = false)
 @Component(base = true, genInterface = false)
 abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, QuadTreeObject, Displayable, Sized, Senseable, Controllable, Settable{
     //region vars and initialization
@@ -58,9 +58,6 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
     static final BuildDamageEvent bulletDamageEvent = new BuildDamageEvent();
     static int sleepingEntities = 0;
 
-    transient int buildingArrayIndex = -1;
-
-    @Import boolean added;
     @Import float x, y, health, maxHealth;
     @Import Team team;
     @Import boolean dead;
@@ -97,10 +94,8 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
     transient float lastHealTime = -120f * 10f;
     transient Color suppressColor = Pal.sapBullet;
 
-    transient boolean hadTimeScale = false;
-    transient float timeScale = 1f, timeScaleDuration;
-
     private transient float lastDamageTime = -recentDamageTime;
+    private transient float timeScale = 1f, timeScaleDuration;
     private transient float dumpAccum;
 
     private transient boolean sleeping;
@@ -159,37 +154,11 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
         return self();
     }
 
-    @Replace
     @Override
     public void add(){
-        //there is no need for a 'is added' guard since it is injected regardless of whether the method is replaced
-
-        addToList();
         if(power != null){
             power.graph.checkAdd();
         }
-
-        added = true;
-    }
-
-    @Replace
-    @Override
-    public void remove(){
-        removeFromList();
-        added = false;
-    }
-
-    public void removeFromList(){
-        state.buildings.buildings.remove(self());
-    }
-
-    public void addToList(){
-        state.buildings.buildings.add(self());
-    }
-
-    //used in clear()
-    public void markRemoved(){
-        added = false;
     }
 
     @Override
@@ -490,16 +459,12 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
 
     /** Sets the time scale of the building to the given intensity, unless it's above that value */
     public void applyBoost(float intensity, float duration){
-        if(!block.canOverdrive || duration <= 0f) return;
-
+        if(!block.canOverdrive) return;
         //do not refresh time scale when getting a lower intensity
         if(intensity >= this.timeScale - 0.001f){
             timeScaleDuration = Math.max(timeScaleDuration, duration);
         }
         timeScale = Math.max(timeScale, intensity);
-        if(!hadTimeScale){
-            state.buildings.addTimeScaled(self());
-        }
     }
 
     /** Sets the time scale of the building to the given intensity, unless it's below that value */
@@ -509,9 +474,6 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
             timeScaleDuration = Math.max(timeScaleDuration, duration);
         }
         timeScale = Math.min(timeScale, intensity);
-        if(!hadTimeScale){
-            state.buildings.addTimeScaled(self());
-        }
     }
 
     public void applyHealSuppression(float amount){
@@ -2282,6 +2244,12 @@ abstract class BuildingComp implements Posc, Teamc, Healthc, Buildingc, Timerc, 
     @Replace
     @Override
     public void update(){
+
+        //TODO refactor to separate loop?
+        if((timeScaleDuration -= Time.delta) <= 0f){
+            timeScale = 1f;
+        }
+
         //TODO separate multithreaded system for sound? AudioSource, etc
         if(!headless && block.ambientSound != Sounds.none && shouldAmbientSound()){
             control.sound.loop(block.ambientSound, self(), block.ambientSoundVolume * ambientVolume());

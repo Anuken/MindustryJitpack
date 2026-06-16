@@ -4,8 +4,6 @@ import mindustry.gen.*;
 import mindustry.world.blocks.distribution.*;
 import mindustry.world.meta.*;
 
-import static mindustry.Vars.*;
-
 public class LiquidBridge extends ItemBridge{
 
     public LiquidBridge(String name){
@@ -19,16 +17,6 @@ public class LiquidBridge extends ItemBridge{
     }
 
     public class LiquidBridgeBuild extends ItemBridgeBuild{
-
-        @Override
-        public void addToList(){
-            state.buildings.liquidBridges.add(this);
-        }
-
-        @Override
-        public void removeFromList(){
-            state.buildings.liquidBridges.remove(this);
-        }
 
         @Override
         public void updateTransport(Building other){
