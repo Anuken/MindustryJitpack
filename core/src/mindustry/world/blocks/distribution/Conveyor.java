@@ -142,7 +142,7 @@ public class Conveyor extends Block implements Autotiler{
 
         @Override
         public void draw(){
-            int frame = enabled && clogHeat <= 0.5f ? (int)(((Time.time * speed * 8f * timeScale * efficiency)) % 4) : 0;
+            int frame = enabled && clogHeat <= 0.5f ? (int)(((Time.time * speed * 8f * timeScale)) % 4) : 0;
 
             //draw extra conveyors facing this one for non-square tiling purposes
             Draw.z(Layer.blockUnder);
@@ -250,8 +250,7 @@ public class Conveyor extends Block implements Autotiler{
             }
         }
 
-        @Override
-        public void updateTile(){
+        public final void updateConveyor(){
             minitem = 1f;
             mid = 0;
 
@@ -263,7 +262,7 @@ public class Conveyor extends Block implements Autotiler{
             }
 
             float nextMax = aligned ? 1f - Math.max(itemSpace - nextc.minitem, 0) : 1f;
-            float moved = speed * edelta();
+            float moved = speed * delta();
 
             for(int i = len - 1; i >= 0; i--){
                 float nextpos = (i == len - 1 ? 100f : ys[i + 1]) - itemSpace;
@@ -295,6 +294,16 @@ public class Conveyor extends Block implements Autotiler{
             }
 
             noSleep();
+        }
+
+        @Override
+        public void addToList(){
+            state.buildings.conveyors.add(this);
+        }
+
+        @Override
+        public void removeFromList(){
+            state.buildings.conveyors.remove(this);
         }
 
         public boolean pass(Item item){
