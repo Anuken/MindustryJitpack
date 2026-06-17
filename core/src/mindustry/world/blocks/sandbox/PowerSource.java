@@ -20,7 +20,9 @@ public class PowerSource extends PowerNode{
         @Override
         public void onProximityUpdate(){
             super.onProximityUpdate();
-            checkAllowUpdate();
+            if(!allowUpdate()){
+                enabled = false;
+            }
         }
 
         @Override

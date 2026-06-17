@@ -9,8 +9,6 @@ import mindustry.type.*;
 import mindustry.world.blocks.liquid.*;
 import mindustry.world.meta.*;
 
-import static mindustry.Vars.*;
-
 public class DirectionLiquidBridge extends DirectionBridge{
     public final int timerFlow = timers++;
 
@@ -35,17 +33,7 @@ public class DirectionLiquidBridge extends DirectionBridge{
         return new TextureRegion[]{bottomRegion, region, dirRegion};
     }
 
-    public class DirectionLiquidBridgeBuild extends DirectionBridgeBuild{
-
-        @Override
-        public void addToList(){
-            state.buildings.directionLiquidBridges.add(this);
-        }
-
-        @Override
-        public void removeFromList(){
-            state.buildings.directionLiquidBridges.remove(this);
-        }
+    public class DuctBridgeBuild extends DirectionBridgeBuild{
 
         @Override
         public void drawCached(){

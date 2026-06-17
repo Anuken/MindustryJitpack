@@ -136,10 +136,7 @@ public class SolidPump extends Pump{
             }
 
             pumpTime += warmup * edelta();
-        }
 
-        @Override
-        public void processLiquids(){
             dumpLiquid(result);
         }
 

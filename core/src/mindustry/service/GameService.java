@@ -566,9 +566,8 @@ public class GameService{
                 }
             }
 
-            for(int i = 0; i < state.buildings.powerGraphs.size; i++){
-
-                var graph = state.buildings.powerGraphs.values[i];
+            for(var up : Groups.powerGraph){
+                var graph = up.graph();
                 if(graph.all.size > 1 && graph.all.first().team == player.team() && graph.hasPowerBalanceSamples()){
                     float balance = graph.getPowerBalance() * 60f;
 

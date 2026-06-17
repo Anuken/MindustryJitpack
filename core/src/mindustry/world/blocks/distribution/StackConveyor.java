@@ -7,7 +7,6 @@ import arc.math.geom.*;
 import arc.struct.*;
 import arc.util.*;
 import arc.util.io.*;
-import mindustry.*;
 import mindustry.annotations.Annotations.*;
 import mindustry.content.*;
 import mindustry.entities.*;
@@ -266,18 +265,7 @@ public class StackConveyor extends Block implements Autotiler{
         }
 
         @Override
-        public void addToList(){
-            Vars.state.buildings.stackConveyors.add(this);
-        }
-
-        @Override
-        public void removeFromList(){
-            Vars.state.buildings.stackConveyors.remove(this);
-        }
-
-        public final void updateStackConveyor(){
-            updateConsumption();
-
+        public void updateTile(){
             //the item still needs to be "reeled" in when disabled
             float eff = enabled ? (efficiency + baseEfficiency) : 1f;
 

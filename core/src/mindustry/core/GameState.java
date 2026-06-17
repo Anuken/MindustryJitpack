@@ -41,12 +41,10 @@ public class GameState{
     public MapLocales mapLocales = new MapLocales();
     /** Global attributes of the environment, calculated by weather. */
     public Attributes envAttrs = new Attributes();
-    /** Cached team data. */
+    /** Team data. Gets reset every new game. */
     public Teams teams = new Teams();
-    /** Handles edits of game content and additional image/audio assets. */
+    /** Handles JSON edits of game content. */
     public DataManager data = new DataManager();
-    /** All buildings in the map. */
-    public Buildings buildings = new Buildings();
     /** Number of enemies in the game; only used clientside in servers. */
     public int enemies;
     /** Map being playtested (not edited!) */

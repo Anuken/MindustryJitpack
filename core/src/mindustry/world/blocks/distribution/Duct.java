@@ -136,16 +136,6 @@ public class Duct extends Block implements Autotiler{
         public @Nullable DuctBuild nextc;
 
         @Override
-        public void addToList(){
-            state.buildings.ducts.add(this);
-        }
-
-        @Override
-        public void removeFromList(){
-            state.buildings.ducts.remove(this);
-        }
-
-        @Override
         public void draw(){
             draw(false);
         }
@@ -199,7 +189,8 @@ public class Duct extends Block implements Autotiler{
             }
         }
 
-        public final void updateDuct(){
+        @Override
+        public void updateTile(){
             progress += edelta() / speed * 2f;
 
             if(current != null && next != null){

@@ -34,9 +34,7 @@ public class ConsumeItemExplode extends ConsumeItemFilter{
 
         if(item != null){
             if(Vars.state.rules.reactorExplosions && Mathf.chance(build.delta() * baseChance * Mathf.clamp(item.explosiveness - threshold))){
-                //this can be called in a different thread, so post() it. this is bad for performance, but exploding is just a funny gimmick mechanic anyway, and should not happen in most real games
-                Core.app.post(() -> build.damage(damage));
-
+                build.damage(damage);
                 explodeEffect.at(build.x + Mathf.range(build.block.size * tilesize / 2f), build.y + Mathf.range(build.block.size * tilesize / 2f));
                 Events.fire(Trigger.blastGenerator);
             }

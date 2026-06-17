@@ -135,6 +135,8 @@ public class PayloadConveyor extends Block{
 
         @Override
         public void updateTile(){
+            if(!enabled) return;
+
             if(item != null){
                 item.update(null, this);
             }
