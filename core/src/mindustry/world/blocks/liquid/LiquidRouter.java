@@ -3,7 +3,6 @@ package mindustry.world.blocks.liquid;
 import arc.graphics.g2d.*;
 import mindustry.gen.*;
 import mindustry.type.*;
-import mindustry.world.blocks.*;
 
 public class LiquidRouter extends LiquidBlock{
     public float liquidPadding = 0f;
@@ -14,9 +13,6 @@ public class LiquidRouter extends LiquidBlock{
         noUpdateDisabled = true;
         canOverdrive = false;
         floating = true;
-
-        update = false;
-        destructible = true;
     }
 
     @Override
@@ -24,10 +20,9 @@ public class LiquidRouter extends LiquidBlock{
         return new TextureRegion[]{bottomRegion, region};
     }
 
-    public class LiquidRouterBuild extends LiquidBuild implements LiquidUpdater{
-
+    public class LiquidRouterBuild extends LiquidBuild{
         @Override
-        public void updateLiquids(float delta){
+        public void updateTile(){
             dumpLiquid(liquids.current());
         }
 

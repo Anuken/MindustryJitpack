@@ -55,9 +55,6 @@ public class Conduit extends LiquidBlock implements Autotiler{
         priority = TargetPriority.transport;
         drawCached = true;
         buildingCacheLayer = BuildingCacheLayer.under;
-
-        update = false;
-        destructible = true;
     }
 
     @Override
@@ -156,11 +153,10 @@ public class Conduit extends LiquidBlock implements Autotiler{
         return new TextureRegion[]{Core.atlas.find("conduit-bottom"), topRegions[0]};
     }
 
-    public class ConduitBuild extends LiquidBuild implements ChainedBuilding, LiquidUpdater{
+    public class ConduitBuild extends LiquidBuild implements ChainedBuilding{
         public float smoothLiquid;
         public int blendbits, xscl = 1, yscl = 1, blending;
         public boolean capped, backCapped = false;
-        Building next;
 
         @Override
         public void drawCached(){
@@ -240,21 +236,24 @@ public class Conduit extends LiquidBlock implements Autotiler{
             Building next = front(), prev = back();
             capped = next == null || next.team != team || !next.block.hasLiquids;
             backCapped = blendbits == 0 && (prev == null || prev.team != team || !prev.block.hasLiquids);
-            this.next = next;
         }
 
         @Override
         public boolean acceptLiquid(Building source, Liquid liquid){
+            noSleep();
             return (liquids.current() == liquid || liquids.currentAmount() < 0.2f)
                 && (tile == null || source == this || (source.relativeTo(tile.x, tile.y) + 2) % 4 != rotation);
         }
 
         @Override
-        public void updateLiquids(float delta){
-            smoothLiquid = Mathf.lerp(smoothLiquid, liquids.currentAmount() / liquidCapacity, 0.05f * delta);
+        public void updateTile(){
+            smoothLiquid = Mathf.lerpDelta(smoothLiquid, liquids.currentAmount() / liquidCapacity, 0.05f);
 
             if(liquids.currentAmount() > 0.0001f && timer(timerFlow, 1)){
-                moveLiquidForward(next, leaks, liquids.current(), delta);
+                moveLiquidForward(leaks, liquids.current());
+                noSleep();
+            }else{
+                sleep();
             }
         }
 

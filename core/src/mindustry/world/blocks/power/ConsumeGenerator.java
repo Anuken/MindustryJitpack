@@ -10,7 +10,6 @@ import mindustry.entities.*;
 import mindustry.game.EventType.*;
 import mindustry.graphics.*;
 import mindustry.type.*;
-import mindustry.world.blocks.*;
 import mindustry.world.consumers.*;
 import mindustry.world.meta.*;
 
@@ -94,7 +93,7 @@ public class ConsumeGenerator extends PowerGenerator{
         }
     }
 
-    public class ConsumeGeneratorBuild extends GeneratorBuild implements LiquidUpdater{
+    public class ConsumeGeneratorBuild extends GeneratorBuild{
         public float warmup, totalTime, efficiencyMultiplier = 1f, itemDurationMultiplier = 1;
 
         @Override
@@ -134,29 +133,19 @@ public class ConsumeGenerator extends PowerGenerator{
                 generateTime = 1f;
             }
 
-            //generation time always goes down, but only at the end so consumeTriggerValid doesn't assume fake items
-            generateTime -= delta() / (itemDuration * itemDurationMultiplier);
-        }
-
-        @Override
-        public boolean shouldLiquidUpdate(){
-            return outputLiquid != null;
-        }
-
-        @Override
-        public void updateLiquids(float delta){
             if(outputLiquid != null){
-                float added = Math.min(productionEfficiency * delta * timeScale * outputLiquid.amount, liquidCapacity - liquids.get(outputLiquid.liquid));
+                float added = Math.min(productionEfficiency * delta() * outputLiquid.amount, liquidCapacity - liquids.get(outputLiquid.liquid));
                 liquids.add(outputLiquid.liquid, added);
                 dumpLiquid(outputLiquid.liquid);
 
                 if(explodeOnFull && liquids.get(outputLiquid.liquid) >= liquidCapacity - 0.01f){
-                    Core.app.post(() -> {
-                        kill();
-                        Events.fire(new GeneratorPressureExplodeEvent(this));
-                    });
+                    kill();
+                    Events.fire(new GeneratorPressureExplodeEvent(this));
                 }
             }
+
+            //generation time always goes down, but only at the end so consumeTriggerValid doesn't assume fake items
+            generateTime -= delta() / (itemDuration * itemDurationMultiplier);
         }
 
         @Override

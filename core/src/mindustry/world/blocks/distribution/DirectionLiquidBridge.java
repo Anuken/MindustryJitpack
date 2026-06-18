@@ -6,7 +6,6 @@ import mindustry.annotations.Annotations.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
 import mindustry.type.*;
-import mindustry.world.blocks.*;
 import mindustry.world.blocks.liquid.*;
 import mindustry.world.meta.*;
 
@@ -34,8 +33,7 @@ public class DirectionLiquidBridge extends DirectionBridge{
         return new TextureRegion[]{bottomRegion, region, dirRegion};
     }
 
-    public class DuctBridgeBuild extends DirectionBridgeBuild implements LiquidUpdater{
-        Building next;
+    public class DuctBridgeBuild extends DirectionBridgeBuild{
 
         @Override
         public void drawCached(){
@@ -59,17 +57,17 @@ public class DirectionLiquidBridge extends DirectionBridge{
         }
 
         @Override
-        public void onProximityUpdate(){
-            super.onProximityUpdate();
-
-            next = front();
-        }
-
-        @Override
         public void updateTile(){
             var link = lastLink = findLink();
             if(link != null){
+                moveLiquid(link, liquids.current());
                 link.occupied[rotation % 4] = this;
+            }
+
+            if(link == null){
+                if(liquids.currentAmount() > 0.0001f && timer(timerFlow, 1)){
+                    moveLiquidForward(false, liquids.current());
+                }
             }
 
             for(int i = 0; i < 4; i++){
@@ -80,21 +78,10 @@ public class DirectionLiquidBridge extends DirectionBridge{
         }
 
         @Override
-        public void updateLiquids(float delta){
-            var link = lastLink;
-            if(link != null){
-                moveLiquid(link, liquids.current(), delta);
-            }else{
-                if(liquids.currentAmount() > 0.0001f && timer(timerFlow, 1)){
-                    moveLiquidForward(next, false, liquids.current(), Time.delta);
-                }
-            }
-        }
-
-        @Override
         public boolean acceptLiquid(Building source, Liquid liquid){
+            var link = findLink();
             //only accept if there's an output point, or it comes from a link
-            if(lastLink == null && !(source instanceof DirectionBridgeBuild b && b.findLink() == this)) return false;
+            if(link == null && !(source instanceof DirectionBridgeBuild b && b.findLink() == this)) return false;
 
             int rel = this.relativeToEdge(source.tile);
 
