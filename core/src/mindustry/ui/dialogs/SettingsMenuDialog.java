@@ -566,7 +566,6 @@ public class SettingsMenuDialog extends BaseDialog{
             Core.settings.put("swapdiagonal", false);
         }
 
-        dev.sliderPref("buildingtimestep", 30, 10, 65, 5, s -> s > 60 ? bundle.get("off") : s + "");
         dev.checkPref("console", false);
         dev.checkPref("drawhitboxes", false);
 
