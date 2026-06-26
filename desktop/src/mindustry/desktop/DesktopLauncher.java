@@ -3,8 +3,10 @@ package mindustry.desktop;
 import arc.*;
 import arc.Files.*;
 import arc.backend.sdl.*;
+import arc.backend.sdl.jni.*;
 import arc.discord.*;
 import arc.discord.DiscordRPC.*;
+import arc.filedialogs.*;
 import arc.files.*;
 import arc.math.*;
 import arc.profiling.*;
@@ -14,7 +16,7 @@ import arc.util.Log.*;
 import arc.util.serialization.*;
 import com.codedisaster.steamworks.*;
 import mindustry.*;
-import mindustry.core.Version;
+import mindustry.core.*;
 import mindustry.desktop.steam.*;
 import mindustry.game.EventType.*;
 import mindustry.gen.*;
@@ -24,11 +26,9 @@ import mindustry.net.*;
 import mindustry.net.Net.*;
 import mindustry.service.*;
 import mindustry.type.*;
+import mindustry.ui.*;
 import mindustry.ui.FileChooser.*;
 import mindustry.ui.dialogs.*;
-import org.lwjgl.*;
-import org.lwjgl.sdl.*;
-import org.lwjgl.system.*;
 
 import java.io.*;
 
@@ -56,9 +56,6 @@ public class DesktopLauncher extends ClientLauncher{
                 coreProfile = true;
                 width = 900;
                 height = 700;
-                appName = "Mindustry";
-                appIdentifier = "io.anuke.mindustry";
-                appVersion = Version.buildString();
 
                 //on Windows, Intel drivers might be buggy with OpenGL 3.x, so only use 2.x. See https://github.com/Anuken/Mindustry/issues/11041
                 if(IntelGpuCheck.wasIntel()){
@@ -332,58 +329,61 @@ public class DesktopLauncher extends ClientLauncher{
 
     @Override
     public void showFileChooser(FileChooserParams params){
+        Threads.daemon(() -> {
+            try{
+                FileDialogs.loadNatives();
+                var ext = params.extensions;
 
-        SDL_DialogFileFilter.Buffer filters = SDL_DialogFileFilter.calloc(params.extensions.length);
-        try(MemoryStack stack = MemoryStack.stackPush()){
-            for(int i = 0; i < params.extensions.length; i++){
-                String extName = params.extensions[i];
-
-                var filter = SDL_DialogFileFilter.calloc(stack)
-                .name(MemoryUtil.memUTF8(extName.isEmpty() ? "All Files" : "." + extName + " files"))
-                .pattern(MemoryUtil.memUTF8(extName.isEmpty() ? "*" : extName));
-
-                filters.put(i, filter);
-            }
-        }
-        SDL_DialogFileCallbackI callback = (userData, files, filter) -> {
-            if(files == 0) return;
-
-            int count = 0;
-            while(MemoryUtil.memGetAddress(files + (long)count * Pointer.POINTER_SIZE) != 0){
-                count ++;
-            }
-
-            if(count == 0) return;
-
-            PointerBuffer pointerBuffer = MemoryUtil.memPointerBuffer(files, count);
-            Fi[] resultFiles = new Fi[count];
-            for(int i = 0; i < count; i++){
-                resultFiles[i] = Core.files.absolute(pointerBuffer.getStringUTF8(i));
-            }
-
-            Core.app.post(() -> {
-                FileChooserDialog.setLastDirectory(resultFiles[0].isDirectory() ? resultFiles[0] : resultFiles[0].parent());
-
-                if(!params.open){
-                    Fi single = resultFiles[0];
-                    //fix extension to match filters
-                    if(!Structs.contains(params.extensions, single::extEquals)){
-                        single = single.parent().child(single.nameWithoutExtension() + "." + params.extensions[0]);
-                    }
-                    params.handleChooseResult(single);
-                }else{
-                    params.handleChooseResult(resultFiles);
+                String result;
+                String[] patterns = new String[ext.length];
+                for(int i = 0; i < ext.length; i++){
+                    patterns[i] = "*." + ext[i];
                 }
-            });
-        };
 
-        if(params.open){
-            SDLDialog.SDL_ShowOpenFileDialog(callback, 0, ((SdlApplication)Core.app).getWindow(), filters, FileChooserDialog.getLastDirectory().absolutePath(), params.allowMultiple);
-        }else{
-            SDLDialog.SDL_ShowSaveFileDialog(callback, 0, ((SdlApplication)Core.app).getWindow(), filters, FileChooserDialog.getLastDirectory().child(params.fileName).absolutePath());
-        }
+                //on MacOS, .msav is not properly recognized until I put garbage into the array?
+                if(patterns.length == 1 && OS.isMac && params.open){
+                    patterns = new String[]{"", "*." + ext[0]};
+                }
 
-        filters.free();
+                if(params.open){
+                    result = FileDialogs.openFileDialog(params.title, FileChooserDialog.getLastDirectory().absolutePath() + "/", patterns, "." + ext[0] + " files", params.allowMultiple);
+                }else{
+                    result = FileDialogs.saveFileDialog(params.title, FileChooserDialog.getLastDirectory().child(params.fileName).absolutePath(), patterns, "." + ext[0] + " files");
+                }
+
+                if(result == null) return;
+
+                if(result.length() > 1 && result.contains("\n")){
+                    result = result.split("\n")[0];
+                }
+
+                //cancelled selection, ignore result
+                if(result.isEmpty() || result.equals("\n")) return;
+                if(result.endsWith("\n")) result = result.substring(0, result.length() - 1);
+
+                Fi[] resultFiles = Seq.with(result.split("\\|")).map(Core.files::absolute).toArray(Fi.class);
+
+                if(result.isEmpty()) return;
+
+                Core.app.post(() -> {
+                    FileChooserDialog.setLastDirectory(resultFiles[0].isDirectory() ? resultFiles[0] : resultFiles[0].parent());
+
+                    if(!params.open){
+                        Fi single = resultFiles[0];
+                        //fix extension to match filters
+                        if(!Structs.contains(params.extensions, single::extEquals)){
+                            single = single.parent().child(single.nameWithoutExtension() + "." + ext[0]);
+                        }
+                        params.handleChooseResult(single);
+                    }else{
+                        params.handleChooseResult(resultFiles);
+                    }
+                });
+            }catch(Throwable error){
+                Log.err("Failed to execute native file chooser", error);
+                Core.app.post(() -> FileChooser.showFallbackFileChooser(params));
+            }
+        });
     }
 
     @Override
@@ -508,6 +508,6 @@ public class DesktopLauncher extends ClientLauncher{
     }
 
     private static void message(String message){
-        SDLMessageBox.SDL_ShowSimpleMessageBox(SDLMessageBox.SDL_MESSAGEBOX_ERROR, "oh no", message, 0);
+        SDL.SDL_ShowSimpleMessageBox(SDL.SDL_MESSAGEBOX_ERROR, "oh no", message);
     }
 }
